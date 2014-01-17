@@ -1,0 +1,7 @@
+jid = "someJid@example.com"
+password = "foo-bar"
+
+nick = "MyBotName"
+channel = "chatroomgoeshere"
+
+admins = ["admin@example.com", "techguy@example.com"]

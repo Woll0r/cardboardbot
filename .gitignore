@@ -1,2 +1,5 @@
-# Ignore the config file
+# compiled python files
+*.py[cod]
+
+# custom project ignore
 config.py

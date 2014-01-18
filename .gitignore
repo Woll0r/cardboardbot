@@ -1,5 +1,9 @@
 # compiled python files
 *.py[cod]
 
-# custom project ignore
+# ignore config files
 config.py
+
+# ignore brain
+aiml/
+standard.brn

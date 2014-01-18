@@ -33,6 +33,8 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         self.nick = nick
         self.channel = channel
 
+        botcommands.brain_start()
+
         # Add event handling for Jabber events
         self.add_event_handler("session_start", self.start)
         self.add_event_handler("message", self.message)

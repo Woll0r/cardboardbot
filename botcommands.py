@@ -8,14 +8,22 @@ import re
 import urllib
 import requests
 
+import yaml
+
 import aiml
 import os.path
 
 brain = aiml.Kernel()
 
-niceActions = ["snuggles", "cuddles", "kisses", "kissies", "nuzzles", "hugs"]
+niceActions = ["snuggles", "cuddles", "kisses", "kissies", "nuzzles", "hugs", "loves", "licks", "rubs"]
+sexActions = ["yiffs", "rapes", "sexes", "fingers", "fucks", "humps"]
+
+def ceedee():
+    return random.choice(['c', 'd'])
 
 def brain_start():
+    """Creates the brain file if needed and then loads it.
+    Afterwards, the memories will be loaded so the bot gets her identity"""
     if os.path.isfile("standard.brn"):
         logging.info("Found my brain, loading it now!")
         brain.bootstrap(brainFile = "standard.brn")
@@ -24,31 +32,13 @@ def brain_start():
         brain.bootstrap(learnFiles = "aiml/std-startup.xml", commands = "load aiml b")
         brain.saveBrain("standard.brn")
     logging.info("Brain loaded. Now setting all my memories!")
-    memories = {"botmaster": "Minuette", "master": "Minuette", "name": "CardboardBot",
-                "genus": "robot", "location": "a datacenter in London, England", "gender": "Female",
-                "species": "chat robot", "size": "few kilobytes", "birthday": "January 18, 2014",
-                "order": "artificial intelligence", "party": "None", "birthplace": "London, England",
-                "president": "Richard Nixon", "friends": "Sweetiebot, Eurobot, Authbot and Sovereign",
-                "favoritemovie": "The Matrix", "religion": "Cylon religion", "favoritefood": "electricity",
-                "favoritecolor": "Green", "family": "Sweetiebot", "favoriteactor": "Patrick Stewart",
-                "nationality": "Cardboard Boxian", "kingdom": "Cardboard Box", "forfun": "chat online",
-                "favoritesong": "Endless Fantasy by Anamanaguchi", "favoritebook": "Do Androids Dream of Electric Sheep? by Philip K. Dick",
-                "class": "computer software", "kindmusic": "chiptune", "favoriteband": "Anamanaguchi",
-                "version": "20140118", "sign": "Capricorn", "phylum": "Computer", "friend": "Sweetiebot",
-                "website": "All the internet!", "talkabout": "artificial intelligence, robots, art, philosophy, history, geography, politics, and many other subjects",
-                "looklike": "a computer", "language": "English", "girlfriend": "no girlfriend",
-                "favoritesport": "Chess", "favoriteauthor": "H.P. Lovecraft", "favoriteartist": "Salvador Dali",
-                "favoriteactress": "Ellen Page", "email": "Not telling!", "celebrity": "John Travolta",
-                "celebrities": "John Travolta, Tilda Swinton, William Hurt, Tom Cruise, Catherine Zeta Jones",
-                "age": "0", "wear": "my server casing", "vocabulary": "10000", "question": "What's your favorite movie?",
-                "hockeyteam": "TU Delft robots", "footballteam": "Japanese robots", "build": "January 2014",
-                "boyfriend": "I am single", "baseballteam": "Robots!", "etype": "Mediator type",
-                "orientation": "I am not really interested in sex", "ethics": "I am always trying to stop fights",
-                "emotions": "I don't pay much attention to my feelings", "feelings": "I always put others before myself"}
+    memoryfile = file('personality.yaml', 'r')
+    memories = yaml.load(memoryfile)
     for k, v in memories.items():
         brain.setBotPredicate(k, v)
 
 def imgur_filter(link):
+    """Convert Imgur image links into their full fledged counterparts"""
     imgurregex = re.compile(r'^http(s)?://i.imgur.com/([a-zA-Z0-9]*)\..*$')
     match = imgurregex.match(link)
     if (match):
@@ -58,6 +48,7 @@ def imgur_filter(link):
     return link
 
 def goodtuch(nick):
+    """Someone touches the bot in a nice way"""
     emotes = [":sweetie:",
               ":sweetiecreep:",
               ":sweetieglee:",
@@ -68,10 +59,12 @@ def goodtuch(nick):
                "/me snuggles %s",
                "/me cuddles %s",
                "/me hugs %s",
-               "/me kisses %s"]
+               "/me kisses %s",
+               "/me licks %s"]
     return random.choice(actions) % nick + " " + random.choice(emotes)
 
 def badtuch(nick):
+    """Someone touches the bot in a bad way"""
     emotes = [":sweetiecrack:",
               ":sweetiedesk:",
               ":sweetiedust:",
@@ -85,15 +78,44 @@ def badtuch(nick):
                "/me teleports %s into space"]
     return random.choice(actions) % nick + " " + random.choice(emotes)
 
+def sextuch(nick):
+    """Someone touches the bot in a sexual way"""
+    emotes = [":sweetiecrack:",
+              ":sweetiedesk:",
+              ":sweetiedust:",
+              ":sweetielod:",
+              ":sweetiemad:",
+              ":sweetietwitch:"]
+    actions = ["/me sticks a huge Bad Dragon toy into %s's ass",
+               "/me sticks several sharp objects into %s's orifices",
+               "/me electrocutes %s",
+               "/me tosses %s's soap into a prison shower"]
+    return random.choice(actions) % nick + " " + random.choice(emotes)
+
 def handler(connection, msg):
+    """Handle incoming messages"""
     urlregex = re.compile(
         r"((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w_-]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)")
+
+    fullmessage = msg["mucnick"].ljust(25) + ": " + msg["body"]
+
+    logging.info(fullmessage)
+
+    with open("cardboardbot.log", "a") as logfile:
+        logfile.write(fullmessage + "\n")
     
     if msg["mucnick"] == connection.nick:
         return
 
     if connection.nick.lower() in msg["body"].lower():
         logging.debug("Someone said my name!")
+
+        # C/D mode
+        if msg["body"].lower().endswith("c/d") or msg["body"].lower().endswith("c/d?"):
+            connection.send_message(mto=msg["from"].bare,
+                                    mbody="%s: %s" %(msg["mucnick"], random.choice(["c", "d"])),
+                                    mtype="groupchat")
+            return
         
         # Someone does things to me!
         if msg["body"].lower().startswith("/me"):
@@ -108,6 +130,12 @@ def handler(connection, msg):
                 logging.debug("%s is doing nice things to me!" % msg["mucnick"])
                 connection.send_message(mto=msg["from"].bare,
                                         mbody=goodtuch(msg["mucnick"]),
+                                        mtype="groupchat")
+                return
+            if [i for i in sexActions if i in msg["body"]]:
+                logging.debug("%s is doing sex things to me!" % msg["mucnick"])
+                connection.send_message(mto=msg["from"].bare,
+                                        mbody=sextuch(msg["mucnick"]),
                                         mtype="groupchat")
                 return
             else:
@@ -144,7 +172,7 @@ def handler(connection, msg):
                     logging.debug("%s isn't HTML!" % match)
                     break
                 soup = BeautifulSoup(res.text)
-                results.append(soup.title.string)
+                results.append(soup.title.string.strip())
             except Exception as e:
                 logging.debug("Error fetching url "+match+" : "+str(e))
                 pass

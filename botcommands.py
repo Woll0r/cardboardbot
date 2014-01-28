@@ -93,8 +93,8 @@ def sextuch(nick):
               ":sweetielod:",
               ":sweetiemad:",
               ":sweetietwitch:"]
-    actions = ["/me sticks a huge Bad Dragon toy into %s's ass",
-               "/me sticks several sharp objects into %s's orifices",
+    actions = ["/me sticks a broken glass bottle into %s's ass",
+               "/me inserts red hot metal pokers into %s's orifices",
                "/me electrocutes %s",
                "/me tosses %s's soap into a prison shower"]
     return random.choice(actions) % nick + " " + random.choice(emotes)

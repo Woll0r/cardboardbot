@@ -2,32 +2,39 @@
 # -*- coding: utf-8 -*-
 
 import config # Get config
+
 import random
 import logging
 import re
 import urllib
 import requests
 
+# Needed for reading the memories file
 import yaml
 
+# Needed for loading the brain files
 import aiml
 import os.path
 
+# Initialize Alice
 brain = aiml.Kernel()
 
-niceActions = ["snuggles", "cuddles", "kisses", "kissies", "nuzzles", "hugs", "loves", "licks", "rubs"]
+niceActions = ["snuggles", "cuddles", "kisses", "kissies", "nuzzles", "hugs", "loves", "licks", "rubs", "sniffs", "paws", "earnoms", "smooches", "walks up to", "looks at"]
 sexActions = ["yiffs", "rapes", "sexes", "fingers", "fucks", "humps"]
 
 def ceedee():
+    """Confirm or deny"""
     return random.choice(['c', 'd'])
 
 def brain_start():
     """Creates the brain file if needed and then loads it.
     Afterwards, the memories will be loaded so the bot gets her identity"""
     if os.path.isfile("standard.brn"):
+	    # Brain is available, load it
         logging.info("Found my brain, loading it now!")
         brain.bootstrap(brainFile = "standard.brn")
     else:
+	    # No brain file, so we create one.
         logging.info("Didn't find my brain, generating a new one!")
         brain.bootstrap(learnFiles = "aiml/std-startup.xml", commands = "load aiml b")
         brain.saveBrain("standard.brn")

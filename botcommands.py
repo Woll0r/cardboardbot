@@ -29,7 +29,7 @@ def argue():
 
 def rant():
     """Tumblr-rants"""
-    res = requests.get('http://tumblraas.azurewebsites.net/rant/', timeout=5)
+    res = requests.get('http://tumblraas.azurewebsites.net/rant', timeout=5)
     return res.text.strip()
 
 def ceedee():
@@ -158,10 +158,12 @@ def handler(connection, msg):
         if "argue" in msg["body"].lower():
             logging.debug("Someone wants me to argue!")
             connection.send_message(mto=msg["from"].bare, mbody=argue(), mtype="groupchat")
+            return
 
         if "rant" in msg["body"].lower():
             logging.debug("Someone wants me to rant!")
             connection.send_message(mto=msg["from"].bare, mbody=rant(), mtype="groupchat")
+            return
 
         # Delegate response to Alice
         logging.debug("I don't know what %s is saying, so I'll let Alice respond for me!" % msg["mucnick"])

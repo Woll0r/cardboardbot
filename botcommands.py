@@ -27,7 +27,7 @@ def argue():
     res = requests.get('http://tumblraas.azurewebsites.net/', timeout=5)
     return res.text.strip()
 
-def rant()
+def rant():
     """Tumblr-rants"""
     res = requests.get('http://tumblraas.azurewebsites.net/rant/', timeout=5)
     return res.text.strip()

@@ -22,6 +22,16 @@ brain = aiml.Kernel()
 niceActions = ["snuggles", "cuddles", "kisses", "kissies", "nuzzles", "hugs", "loves", "licks", "rubs", "sniffs", "paws", "earnoms", "smooches", "walks up to", "looks at"]
 sexActions = ["yiffs", "rapes", "sexes", "fingers", "fucks", "humps"]
 
+def argue():
+    """Tumblr-rant"""
+    res = requests.get('http://tumblraas.azurewebsites.net/', timeout=5)
+    return res.text.strip()
+
+def rant()
+    """Tumblr-rants"""
+    res = requests.get('http://tumblraas.azurewebsites.net/rant/', timeout=5)
+    return res.text.strip()
+
 def ceedee():
     """Confirm or deny"""
     return random.choice(['c', 'd'])
@@ -129,29 +139,30 @@ def handler(connection, msg):
             logging.debug("I am being touched by %s!" % msg["mucnick"])
             if "pets" in msg["body"].lower():
                 logging.debug("%s is petting me!" % msg["mucnick"])
-                connection.send_message(mto=msg["from"].bare,
-                                        mbody="/me purrs :sweetiepleased:",
-                                        mtype="groupchat")
+                connection.send_message(mto=msg["from"].bare, mbody="/me purrs :sweetiepleased:", mtype="groupchat")
                 return
             if [i for i in niceActions if i in msg["body"]]:
                 logging.debug("%s is doing nice things to me!" % msg["mucnick"])
-                connection.send_message(mto=msg["from"].bare,
-                                        mbody=goodtuch(msg["mucnick"]),
-                                        mtype="groupchat")
+                connection.send_message(mto=msg["from"].bare, mbody=goodtuch(msg["mucnick"]), mtype="groupchat")
                 return
             if [i for i in sexActions if i in msg["body"]]:
                 logging.debug("%s is doing sex things to me!" % msg["mucnick"])
-                connection.send_message(mto=msg["from"].bare,
-                                        mbody=sextuch(msg["mucnick"]),
-                                        mtype="groupchat")
+                connection.send_message(mto=msg["from"].bare, mbody=sextuch(msg["mucnick"]), mtype="groupchat")
                 return
             else:
                 logging.debug("%s is doing bad things to me!" % msg["mucnick"])
-                connection.send_message(mto=msg["from"].bare,
-                                        mbody=badtuch(msg["mucnick"]),
-                                        mtype="groupchat")
+                connection.send_message(mto=msg["from"].bare, mbody=badtuch(msg["mucnick"]), mtype="groupchat")
                 return
         
+        # Tumblr rant
+        if "argue" in msg["body"].lower():
+            logging.debug("Someone wants me to argue!")
+            connection.send_message(mto=msg["from"].bare, mbody=argue(), mtype="groupchat")
+
+        if "rant" in msg["body"].lower():
+            logging.debug("Someone wants me to rant!")
+            connection.send_message(mto=msg["from"].bare, mbody=rant(), mtype="groupchat")
+
         # Delegate response to Alice
         logging.debug("I don't know what %s is saying, so I'll let Alice respond for me!" % msg["mucnick"])
         body = msg["body"]
@@ -159,9 +170,7 @@ def handler(connection, msg):
             body = body.replace(connection.nick + ": ", "", 1)
          
         resp = brain.respond(body, msg["mucnick"])
-        connection.send_message(mto=msg["from"].bare,
-                                mbody=resp,
-                                mtype="groupchat")
+        connection.send_message(mto=msg["from"].bare, mbody=resp, mtype="groupchat")
         return
 
     # Check for URL matches
@@ -187,7 +196,5 @@ def handler(connection, msg):
             # no results
             return
         result = " / ".join(results).strip()
-        connection.send_message(mto=msg["from"].bare,
-                                mbody=result,
-                                mtype="groupchat")
+        connection.send_message(mto=msg["from"].bare, mbody=result, mtype="groupchat")
         return

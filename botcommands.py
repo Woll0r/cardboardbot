@@ -122,16 +122,16 @@ def sextuch(nick):
 def tuch(nick, body):
     """Someone does something to me, decide what to do with them"""
     if "pets" in body.lower():
-        logging.debug("%s is petting me!" % msg["mucnick"])
+        logging.debug("%s is petting me!" % nick)
         return "/me purrs :sweetiepleased:"
     if [i for i in niceActions if i in body.lower()]:
-        logging.debug("%s is doing nice things to me!" % msg["mucnick"])
+        logging.debug("%s is doing nice things to me!" % nick)
         return goodtuch(nick)
     if [i for i in sexActions if i in body.lower()]:
-        logging.debug("%s is doing sex things to me!" % msg["mucnick"])
+        logging.debug("%s is doing sex things to me!" % nick)
         return sextuch(nick)
     else:
-        logging.debug("%s is doing bad things to me!" % msg["mucnick"])
+        logging.debug("%s is doing bad things to me!" % nick)
         return badtuch(nick)
     
 def alicemessage(nick, body):

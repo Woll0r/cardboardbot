@@ -66,7 +66,7 @@ def imgur_filter(link):
 
 def e621_filter(link):
     """Convert e621 image links into their full fledged counterparts"""
-    e621regex = re.compile(r'http(s)?://static([0-9]*).e621.net.*?((?:[a-z][a-z]*[0-9]+[a-z0-9]*))')
+    e621regex = re.compile(r'http(s)?://static([0-9]*).e621.net/data(/sample)?.*?((?:[a-z0-9][a-z0-9]*[a-z0-9][a-z0-9]+[a-z0-9]*))')
     match = e621regex.match(link)
     if (match):
         replacement = 'https://e621.net/post/show?md5='+match.group(3)

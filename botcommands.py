@@ -69,7 +69,7 @@ def e621_filter(link):
     e621regex = re.compile(r'http(s)?://static([0-9]*).e621.net/data(/sample)?.*?((?:[a-z0-9][a-z0-9]*[a-z0-9][a-z0-9]+[a-z0-9]*))')
     match = e621regex.match(link)
     if (match):
-        replacement = 'https://e621.net/post/show?md5='+match.group(3)
+        replacement = 'https://e621.net/post/show?md5='+match.group(4)
         logging.debug("replacing "+link+" with "+replacement)
         return replacement
     return link

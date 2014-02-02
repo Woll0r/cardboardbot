@@ -124,10 +124,10 @@ def tuch(nick, body):
     if "pets" in body.lower():
         logging.debug("%s is petting me!" % msg["mucnick"])
         return "/me purrs :sweetiepleased:"
-    if [i for i in niceActions if i in msg["body"]]:
+    if [i for i in niceActions if i in body.lower()]:
         logging.debug("%s is doing nice things to me!" % msg["mucnick"])
         return goodtuch(nick)
-    if [i for i in sexActions if i in msg["body"]]:
+    if [i for i in sexActions if i in body.lower()]:
         logging.debug("%s is doing sex things to me!" % msg["mucnick"])
         return sextuch(nick)
     else:

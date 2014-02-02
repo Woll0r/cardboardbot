@@ -37,7 +37,7 @@ class CardboardBot(sleekxmpp.ClientXMPP):
 
         # Add event handling for Jabber events
         self.add_event_handler("session_start", self.start)
-        self.add_event_handler("message", self.message)
+        self.add_event_handler("groupchat_message", self.groupchatmessage)
 
     # Handle the start event (connection to Jabber)
     def start(self, event):
@@ -48,7 +48,7 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         # Join a channel
         self.plugin['xep_0045'].joinMUC(self.channel, self.nick, wait=False)
 
-    def message(self, event):
+    def groupchatmessage(self, event):
         logging.debug("I got a message! Sending to handler!")
         botcommands.handler(self, event)
 

@@ -64,6 +64,16 @@ def imgur_filter(link):
         return replacement
     return link
 
+def e621_filter(link):
+    """Convert e621 image links into their full fledged counterparts"""
+    e621regex = re.compile(r'http(s)?://static([0-9]*).e621.net.*?((?:[a-z][a-z]*[0-9]+[a-z0-9]*))')
+    match = e621regex.match(link)
+    if (match):
+        replacement = 'https://e621.net/post/show?md5='+match.group(3)
+        logging.debug("replacing "+link+" with "+replacement)
+        return replacement
+    return link
+
 def goodtuch(nick):
     """Someone touches the bot in a nice way"""
     emotes = [":sweetie:",
@@ -109,76 +119,39 @@ def sextuch(nick):
                "/me tosses %s's soap into a prison shower"]
     return random.choice(actions) % nick + " " + random.choice(emotes)
 
-def handler(connection, msg):
-    """Handle incoming messages"""
+def tuch(nick, body):
+    """Someone does something to me, decide what to do with them"""
+    if "pets" in body.lower():
+        logging.debug("%s is petting me!" % msg["mucnick"])
+        return "/me purrs :sweetiepleased:"
+    if [i for i in niceActions if i in msg["body"]]:
+        logging.debug("%s is doing nice things to me!" % msg["mucnick"])
+        return goodtuch(nick)
+    if [i for i in sexActions if i in msg["body"]]:
+        logging.debug("%s is doing sex things to me!" % msg["mucnick"])
+        return sextuch(nick)
+    else:
+        logging.debug("%s is doing bad things to me!" % msg["mucnick"])
+        return badtuch(nick)
+    
+def alicemessage(nick, body):
+    logging.debug("I don't know what %s is saying, so I'll let Alice respond for me!" % nick)
+    if body.startswith(config.nick + ": "):
+        body = body.replace(config.nick + ": ", "", 1)
+    
+    body.replace(config.nick, "you")
+
+    resp = brain.respond(body, nick)
+    return resp
+    
+def handle_url(body):
+    """Handle URL's and get titles from the pages"""
     urlregex = re.compile(
         r"((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w_-]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)")
-
-    fullmessage = msg["mucnick"].ljust(25) + ": " + msg["body"]
-
-    logging.info(fullmessage)
-
-    with open("cardboardbot.log", "a") as logfile:
-        logfile.write(fullmessage + "\n")
-    
-    if msg["mucnick"] == connection.nick:
-        return
-
-    if connection.nick.lower() in msg["body"].lower():
-        logging.debug("Someone said my name!")
-
-        # C/D mode
-        if msg["body"].lower().endswith("c/d") or msg["body"].lower().endswith("c/d?"):
-            connection.send_message(mto=msg["from"].bare,
-                                    mbody="%s: %s" %(msg["mucnick"], random.choice(["c", "d"])),
-                                    mtype="groupchat")
-            return
-        
-        # Someone does things to me!
-        if msg["body"].lower().startswith("/me"):
-            logging.debug("I am being touched by %s!" % msg["mucnick"])
-            if "pets" in msg["body"].lower():
-                logging.debug("%s is petting me!" % msg["mucnick"])
-                connection.send_message(mto=msg["from"].bare, mbody="/me purrs :sweetiepleased:", mtype="groupchat")
-                return
-            if [i for i in niceActions if i in msg["body"]]:
-                logging.debug("%s is doing nice things to me!" % msg["mucnick"])
-                connection.send_message(mto=msg["from"].bare, mbody=goodtuch(msg["mucnick"]), mtype="groupchat")
-                return
-            if [i for i in sexActions if i in msg["body"]]:
-                logging.debug("%s is doing sex things to me!" % msg["mucnick"])
-                connection.send_message(mto=msg["from"].bare, mbody=sextuch(msg["mucnick"]), mtype="groupchat")
-                return
-            else:
-                logging.debug("%s is doing bad things to me!" % msg["mucnick"])
-                connection.send_message(mto=msg["from"].bare, mbody=badtuch(msg["mucnick"]), mtype="groupchat")
-                return
-        
-        # Tumblr rant
-        if "argue" in msg["body"].lower():
-            logging.debug("Someone wants me to argue!")
-            connection.send_message(mto=msg["from"].bare, mbody=argue(), mtype="groupchat")
-            return
-
-        if "rant" in msg["body"].lower():
-            logging.debug("Someone wants me to rant!")
-            connection.send_message(mto=msg["from"].bare, mbody=rant(), mtype="groupchat")
-            return
-
-        # Delegate response to Alice
-        logging.debug("I don't know what %s is saying, so I'll let Alice respond for me!" % msg["mucnick"])
-        body = msg["body"]
-        if body.startswith(connection.nick + ": "):
-            body = body.replace(connection.nick + ": ", "", 1)
-         
-        resp = brain.respond(body, msg["mucnick"])
-        connection.send_message(mto=msg["from"].bare, mbody=resp, mtype="groupchat")
-        return
-
-    # Check for URL matches
-    matches = urlregex.findall(msg["body"])
+    matches = urlregex.findall(body)
     matches = map(lambda x: x[0], matches)
     matches = map(imgur_filter, matches)
+    matches = map(e621_filter, matches)
     if matches:
         logging.debug("I think I see an URL! " + " / ".join(matches))
         results = []
@@ -196,7 +169,55 @@ def handler(connection, msg):
                 pass
         if not len(results):
             # no results
-            return
+            return False
         result = " / ".join(results).strip()
-        connection.send_message(mto=msg["from"].bare, mbody=result, mtype="groupchat")
+        return result
+
+def handler(connection, msg):
+    """Handle incoming messages"""
+    fullmessage = msg["mucnick"].ljust(25) + ": " + msg["body"]
+    logging.info(fullmessage)
+
+    with open("cardboardbot.log", "a") as logfile:
+        logfile.write(fullmessage + "\n")
+    
+    if msg["mucnick"] == connection.nick:
         return
+
+    if connection.nick.lower() in msg["body"].lower():
+        logging.debug("Someone said my name!")
+
+        # C/D mode
+        if msg["body"].lower().endswith("c/d") or msg["body"].lower().endswith("c/d?"):
+            connection.send_message(mto=msg["from"].bare,
+                                    mbody="%s: %s" %(msg["mucnick"], ceedee()),
+                                    mtype="groupchat")
+            return
+        
+        # Someone does things to me!
+        if msg["body"].lower().startswith("/me"):
+            logging.debug("I am being touched by %s!" % msg["mucnick"])
+            connection.send_message(mto=msg["from"].bare, mbody=tuch(msg["mucnick"], msg["body"]), mtype="groupchat")
+            return
+            
+        
+        # Tumblr rant
+        if "argue" in msg["body"].lower():
+            logging.debug("Someone wants me to argue!")
+            connection.send_message(mto=msg["from"].bare, mbody=argue(), mtype="groupchat")
+            return
+
+        if "rant" in msg["body"].lower():
+            logging.debug("Someone wants me to rant!")
+            connection.send_message(mto=msg["from"].bare, mbody=rant(), mtype="groupchat")
+            return
+
+        # Delegate response to Alice
+        connection.send_message(mto=msg["from"].bare, mbody=alicemessage(), mtype="groupchat")
+        return
+
+    links = handle_url(msg["body"])
+    if links:
+        connection.send_message(mto=msg["from"].bare, mbody=links, mtype="groupchat")
+        
+    return

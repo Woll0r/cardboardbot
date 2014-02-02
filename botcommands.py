@@ -213,7 +213,7 @@ def handler(connection, msg):
             return
 
         # Delegate response to Alice
-        connection.send_message(mto=msg["from"].bare, mbody=alicemessage(), mtype="groupchat")
+        connection.send_message(mto=msg["from"].bare, mbody=alicemessage(msg["mucnick"], msg["body"]), mtype="groupchat")
         return
 
     links = handle_url(msg["body"])

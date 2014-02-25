@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import sqlite3
-import sys
 
 try:
     con = sqlite3.connect('cardboardlog.db', isolation_level=None)
@@ -23,7 +22,7 @@ try:
     
 except sqlite3.Error, e:    
     print "Error %s:" % e.args[0]
-    sys.exit(1)
+    exit(1)
     
 finally:
     if con:

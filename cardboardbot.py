@@ -87,23 +87,26 @@ if __name__ == '__main__':
         try:
             opts.jid = config.jid
         except NameError:
-            print "I require a JID!"
-            exit()
+            logging.critical("I require a JID!")
+            exit(1)
     if opts.password is None:
         try:
             opts.password = config.password
         except NameError:
-            print "I require a password!"
+            logging.critical("I require a password!")
+            exit(1)
     if opts.nick is None:
         try:
             opts.nick = config.nick
         except NameError:
-            print "I require a nick!"
+            logging.critical("I require a nick!")
+            exit(1)
     if opts.channel is None:
         try:
             opts.channel = config.channel
         except NameError:
-            print "I require a channel!"
+            logging.critical("I require a channel!")
+            exit(1)
 
     # Set up the bot and it's required XMPP things
     xmpp = CardboardBot(opts.jid, opts.password, opts.nick, opts.channel)
@@ -119,4 +122,4 @@ if __name__ == '__main__':
     if xmpp.connect():
         xmpp.process(block=True)
     else:
-        print("Unable to connect!")
+        logging.critical("Unable to connect!")

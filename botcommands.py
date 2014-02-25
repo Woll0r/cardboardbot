@@ -16,6 +16,10 @@ import yaml
 import aiml
 import os.path
 
+# Needed for logging into SQLite
+import sqlite3
+import sys
+
 # Initialize Alice
 brain = aiml.Kernel()
 
@@ -177,6 +181,20 @@ def handler(connection, msg):
     """Handle incoming messages"""
     fullmessage = msg["mucnick"].ljust(25) + ": " + msg["body"]
     logging.info(fullmessage)
+
+    try:
+        con = sqlite3.connect('test.db')
+        cur = con.cursor()
+        cmd = "INSERT INTO cardboardlog(timestamp, name, message) VALUES(?, ?, ?);"
+        cur.execute(cmd, (int(time.time()), msg["mucnick"], msg["body"])
+    except sqlite3.Error, e:
+        if con:
+            con.rollback()
+        connection.send_message(mto=msg["from"].bare, mbody=":sweetiesiren: My code is problematic! :sweetiesiren:" % e.args[0], mtype="groupchat")
+        logging.critical("Fatal error in SQLite processing: %s" % e.args[0])
+    finally:
+        if con:
+            con.close() 
 
     with open("cardboardbot.log", "a") as logfile:
         logfile.write(fullmessage + "\n")

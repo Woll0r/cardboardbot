@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sqlite3
+import io
 
 try:
     con = sqlite3.connect('cardboardlog.db', isolation_level=None)
@@ -11,7 +12,7 @@ try:
     cur.execute("CREATE TABLE cardboardlog(id INTEGER PRIMARY KEY, timestamp INTEGER, name TEXT, message TEXT);")
     
     content = []
-    with open('cardboardbot.log', 'r', 'utf-8') as f:
+    with io.open('cardboardbot.log', 'r', 'utf-8') as f:
          content = f.readlines()
     
     for line in content:

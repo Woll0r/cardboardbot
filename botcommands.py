@@ -183,7 +183,7 @@ def handler(connection, msg):
     logging.info(fullmessage)
 
     try:
-        con = sqlite3.connect('test.db')
+        con = sqlite3.connect('cardboardlog.db')
         cur = con.cursor()
         cmd = "INSERT INTO cardboardlog(timestamp, name, message) VALUES(?, ?, ?);"
         if len(msg["mucnick"]):

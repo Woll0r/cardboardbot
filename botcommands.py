@@ -185,7 +185,7 @@ def handler(connection, msg):
         con = sqlite3.connect('test.db')
         cur = con.cursor()
         cmd = "INSERT INTO cardboardlog(timestamp, name, message) VALUES(?, ?, ?);"
-        cur.execute(cmd, (int(time.time()), msg["mucnick"], msg["body"])
+        cur.execute(cmd, (int(time.time()), msg["mucnick"], msg["body"]))
     except sqlite3.Error as e:
         if con:
             con.rollback()

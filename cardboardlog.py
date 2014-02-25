@@ -12,7 +12,7 @@ try:
     cur.execute("CREATE TABLE cardboardlog(id INTEGER PRIMARY KEY, timestamp INTEGER, name TEXT, message TEXT);")
     
     content = []
-    with open('cardboardbot.log') as f:
+    with open('cardboardbot.log', "r", "utf-8") as f:
          content = f.readlines()
     
     for line in content:

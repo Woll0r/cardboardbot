@@ -196,7 +196,7 @@ def handler(connection, msg):
         if con:
             con.close() 
 
-    with open("cardboardbot.log", "a") as logfile:
+    with open("cardboardbot.log", "a", "utf-8") as logfile:
         logfile.write(fullmessage + "\n")
     
     if msg["mucnick"] == connection.nick:

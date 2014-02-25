@@ -18,7 +18,6 @@ import os.path
 
 # Needed for logging into SQLite
 import sqlite3
-import sys
 
 # Initialize Alice
 brain = aiml.Kernel()
@@ -187,11 +186,12 @@ def handler(connection, msg):
         cur = con.cursor()
         cmd = "INSERT INTO cardboardlog(timestamp, name, message) VALUES(?, ?, ?);"
         cur.execute(cmd, (int(time.time()), msg["mucnick"], msg["body"])
-    except sqlite3.Error, e:
+    except sqlite3.Error as e:
         if con:
             con.rollback()
         connection.send_message(mto=msg["from"].bare, mbody=":sweetiesiren: My code is problematic! :sweetiesiren:" % e.args[0], mtype="groupchat")
         logging.critical("Fatal error in SQLite processing: %s" % e.args[0])
+        exit(1)
     finally:
         if con:
             con.close() 

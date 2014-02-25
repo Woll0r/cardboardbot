@@ -197,6 +197,7 @@ def handler(connection, msg):
         exit(1)
     finally:
         if con:
+            con.commit()
             con.close() 
 
     with open("cardboardbot.log", "a") as logfile:

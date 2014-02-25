@@ -18,7 +18,8 @@ try:
     for line in content:
         name = line[0:25].rstrip()
         message = line[26:len(line)]
-        cur.execute("INSERT INTO cardboardlog(timestamp, name, message) VALUES (0, ?, ?)", (name, message))
+        cmd = "INSERT INTO cardboardlog(timestamp, name, message) VALUES (0, ?, ?)"
+        cur.execute(cmd, (name, message))
     
 except sqlite3.Error, e:    
     print "Error %s:" % e.args[0]

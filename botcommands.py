@@ -18,6 +18,7 @@ import os.path
 
 # Needed for logging into SQLite
 import sqlite3
+import time
 
 # Initialize Alice
 brain = aiml.Kernel()

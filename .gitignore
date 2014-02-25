@@ -7,4 +7,7 @@ config.py
 # ignore brain
 aiml/
 standard.brn
+
+# ignore logs
 cardboardbot.log
+cardboardlog.db

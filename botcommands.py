@@ -187,6 +187,7 @@ def handler(connection, msg):
         cur = con.cursor()
         cmd = "INSERT INTO cardboardlog(timestamp, name, message) VALUES(?, ?, ?);"
         if len(msg["mucnick"]):
+            logging.debug("Written to database!")
             cur.execute(cmd, (int(time.time()), msg["mucnick"], msg["body"]))
     except sqlite3.Error as e:
         if con:

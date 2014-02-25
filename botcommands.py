@@ -186,11 +186,12 @@ def handler(connection, msg):
         con = sqlite3.connect('test.db')
         cur = con.cursor()
         cmd = "INSERT INTO cardboardlog(timestamp, name, message) VALUES(?, ?, ?);"
-        cur.execute(cmd, (int(time.time()), msg["mucnick"], msg["body"]))
+        if len(msg["mucnick"]):
+            cur.execute(cmd, (int(time.time()), msg["mucnick"], msg["body"]))
     except sqlite3.Error as e:
         if con:
             con.rollback()
-        connection.send_message(mto=msg["from"].bare, mbody=":sweetiesiren: My code is problematic! :sweetiesiren:" % e.args[0], mtype="groupchat")
+        connection.send_message(mto=msg["from"].bare, mbody=":sweetiesiren: My code is problematic! :sweetiesiren:", mtype="groupchat")
         logging.critical("Fatal error in SQLite processing: %s" % e.args[0])
         exit(1)
     finally:

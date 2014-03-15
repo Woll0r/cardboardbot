@@ -166,7 +166,7 @@ def handle_url(body):
     matches = map(lambda x: x[0], matches)
     matches = map(imgur_filter, matches)
     matches = map(e621_filter, matches)
-    matches = map(deviantart_filter, matches)
+    # matches = map(deviantart_filter, matches)                      # Doesn't work properly and makes normal ones barf.
     if matches:
         logging.debug("I think I see an URL! " + " / ".join(matches))
         results = []

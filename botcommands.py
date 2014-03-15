@@ -78,7 +78,7 @@ def e621_filter(link):
         return replacement
     return link
     
-def deviantart_filter(link)
+def deviantart_filter(link):
     """Convert DeviantArt image links into their full fledged counterparts"""
     deviantartregex = re.compile(r'http(s)?://([a-z0-9]*).deviantart.(net|com)?/.*?((?:[a-z0-9][a-z0-9]*[a-z0-9][a-z0-9]+[a-z0-9_\\/]*)).*?((?:[a-z0-9][a-z0-9]*[a-z0-9][a-z0-9]+[a-z0-9]*))')
     match = deviantartregex.match(link)

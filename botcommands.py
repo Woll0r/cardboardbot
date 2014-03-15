@@ -77,6 +77,16 @@ def e621_filter(link):
         logging.debug("replacing "+link+" with "+replacement)
         return replacement
     return link
+    
+def deviantart_filter(link)
+    """Convert DeviantArt image links into their full fledged counterparts"""
+    deviantartregex = re.compile(r'http(s)?://([a-z0-9]*).deviantart.(net|com)?/.*?((?:[a-z0-9][a-z0-9]*[a-z0-9][a-z0-9]+[a-z0-9_\\/]*)).*?((?:[a-z0-9][a-z0-9]*[a-z0-9][a-z0-9]+[a-z0-9]*))')
+    match = deviantartregex.match(link)
+    if (match):
+        replacement = 'http://www.deviantart.com/#/' + match.group(5)
+        logging.debug("replacing "+link+" with "+replacement)
+        return replacement
+    return link
 
 def goodtuch(nick):
     """Someone touches the bot in a nice way"""
@@ -156,6 +166,7 @@ def handle_url(body):
     matches = map(lambda x: x[0], matches)
     matches = map(imgur_filter, matches)
     matches = map(e621_filter, matches)
+    matches = map(deviantart_filter, matches)
     if matches:
         logging.debug("I think I see an URL! " + " / ".join(matches))
         results = []

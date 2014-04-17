@@ -23,9 +23,26 @@ import time
 # Initialize Alice
 brain = aiml.Kernel()
 
-niceActions = ["snuggles", "cuddles", "kisses", "kissies", "nuzzles", "hugs", "loves", "licks", "rubs", "sniffs", "paws", "earnoms", "smooches", "walks up to", "looks at"]
+niceActions = ["snuggles", "cuddles", "kisses", "kissies", "nuzzles", "hugs", "loves", "licks", "rubs", "sniffs", "paws", "earnoms", "smooches", "walks up to", "looks at", "boops"]
 sexActions = ["yiffs", "rapes", "sexes", "fingers", "fucks", "humps"]
 
+def get_user_affiliation(connection, nick):
+    useraffiliation = connection.plugin['xep_0045'].getJidProperty(connection.room, nick, 'affiliation')
+    return useraffiliation
+
+def get_user_jid(connection, nick):
+    userjid = connection.plugin['xep_0045'].getJidProperty(connection.room, nick, 'jid')
+    return userjid
+
+def kick_user(connection, nick):
+    userjid = get_user_jid(connection, nick)
+    kick = connection.plugin['xep_0045'].setRole(connection.room, jid=userjid, affiliation="none")
+    return kick
+
+def ban_user(connection, nick):
+    userjid = get_user_jid(connection, nick)
+    ban = connection.plugin['xep_0045'].setAffiliation(connection.room, jid=userjid, affiliation="outcast")
+    
 def argue():
     """Tumblr-rant"""
     res = requests.get('http://tumblraas.azurewebsites.net/', timeout=5)
@@ -158,7 +175,7 @@ def alicemessage(nick, body):
     resp = brain.respond(body, nick)
     return resp
     
-def handle_url(body):
+def handle_url(timestamp, sender, body):
     """Handle URL's and get titles from the pages"""
     urlregex = re.compile(
         r"((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w_-]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)")
@@ -176,9 +193,12 @@ def handle_url(body):
                 res = requests.get(match, timeout=5)
                 if not 'html' in res.headers['content-type']:
                     logging.debug("%s isn't HTML!" % match)
-                    break
-                soup = BeautifulSoup(res.text)
-                results.append(soup.title.string.strip())
+                    insert_in_linktable(timestamp, sender, match, match)
+                else:
+                    soup = BeautifulSoup(res.text)
+                    title = soup.title.string.strip()
+                    insert_in_linktable(timestamp, sender, match, title)
+                    results.append(title)
             except Exception as e:
                 logging.debug("Error fetching url "+match+" : "+str(e))
                 pass
@@ -188,18 +208,37 @@ def handle_url(body):
         result = " / ".join(results).strip()
         return result
 
+def insert_in_linktable(timestamp, sender, url, title):
+    try:
+        con = sqlite3.connect('cardboardlog.db')
+        cur = con.cursor()
+        cmd = "INSERT INTO cardboardlinks(timestamp, name, url, title) VALUES(?, ?, ?, ?);"
+        cur.execute(cmd, (timestamp, sender, url, title))
+    except sqlite3.Error as e:
+        if con:
+            con.rollback()
+        logging.critical("Fatal error in SQLite processing: %s" % e.args[0])
+        exit(1)
+    finally:
+        if con:
+            con.commit()
+            con.close() 
+        
 def handler(connection, msg):
     """Handle incoming messages"""
     fullmessage = msg["mucnick"].ljust(25) + ": " + msg["body"]
     logging.info(fullmessage)
 
+    timestamp = int(time.time())
+    sender = msg["mucnick"]
+    
     try:
         con = sqlite3.connect('cardboardlog.db')
         cur = con.cursor()
         cmd = "INSERT INTO cardboardlog(timestamp, name, message) VALUES(?, ?, ?);"
         if len(msg["mucnick"]):
             logging.debug("Written to database!")
-            cur.execute(cmd, (int(time.time()), msg["mucnick"], msg["body"]))
+            cur.execute(cmd, (timestamp, sender, msg["body"]))
     except sqlite3.Error as e:
         if con:
             con.rollback()
@@ -249,7 +288,7 @@ def handler(connection, msg):
         connection.send_message(mto=msg["from"].bare, mbody=alicemessage(msg["mucnick"], msg["body"]), mtype="groupchat")
         return
 
-    links = handle_url(msg["body"])
+    links = handle_url(timestamp, sender, msg["body"])
     if links:
         connection.send_message(mto=msg["from"].bare, mbody=links, mtype="groupchat")
         

@@ -1,0 +1,10 @@
+PyAIML==0.8.6
+PyYAML==3.10
+argparse==1.2.1
+beautifulsoup4==4.3.2
+cleverbot==0.1.1
+distribute==0.6.24
+dnspython==1.11.1
+requests==2.2.0
+sleekxmpp==1.1.11
+wsgiref==0.1.2

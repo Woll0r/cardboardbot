@@ -23,33 +23,38 @@ import time
 # Initialize Alice
 brain = aiml.Kernel()
 
+# Define actions that can be performed that warrant a specific response
 niceActions = ["snuggles", "cuddles", "kisses", "kissies", "nuzzles", "hugs", "loves", "licks", "rubs", "sniffs", "paws", "earnoms", "smooches", "walks up to", "looks at", "boops"]
 sexActions = ["yiffs", "rapes", "sexes", "fingers", "fucks", "humps"]
 
 def get_user_affiliation(connection, nick):
+    """Get a user's affiliation with the room"""
     useraffiliation = connection.plugin['xep_0045'].getJidProperty(connection.room, nick, 'affiliation')
     return useraffiliation
 
 def get_user_jid(connection, nick):
+    """Get the JID from a user based on their nick"""
     userjid = connection.plugin['xep_0045'].getJidProperty(connection.room, nick, 'jid')
     return userjid
 
 def kick_user(connection, nick):
+    """Kick a user from the room"""
     userjid = get_user_jid(connection, nick)
     kick = connection.plugin['xep_0045'].setRole(connection.room, jid=userjid, affiliation="none")
     return kick
 
 def ban_user(connection, nick):
+    """Ban a user from the room"""
     userjid = get_user_jid(connection, nick)
     ban = connection.plugin['xep_0045'].setAffiliation(connection.room, jid=userjid, affiliation="outcast")
     
 def argue():
-    """Tumblr-rant"""
+    """Tumblr-argueing thanks to Nyctef and his TumblrAAS"""
     res = requests.get('http://tumblraas.azurewebsites.net/', timeout=5)
     return res.text.strip()
 
 def rant():
-    """Tumblr-rants"""
+    """Tumblr-rants thanks to Nyctef and his TumblrAAS"""
     res = requests.get('http://tumblraas.azurewebsites.net/rant', timeout=5)
     return res.text.strip()
 
@@ -166,6 +171,7 @@ def tuch(nick, body):
         return badtuch(nick)
     
 def alicemessage(nick, body):
+    """Generate a response using Alice AI subroutines"""
     logging.debug("I don't know what %s is saying, so I'll let Alice respond for me!" % nick)
     if body.startswith(config.nick + ": "):
         body = body.replace(config.nick + ": ", "", 1)
@@ -232,6 +238,7 @@ def handler(connection, msg):
     timestamp = int(time.time())
     sender = msg["mucnick"]
     
+    # Log messages in the database
     try:
         con = sqlite3.connect('cardboardlog.db')
         cur = con.cursor()
@@ -250,12 +257,19 @@ def handler(connection, msg):
             con.commit()
             con.close() 
 
+    # Write into the logfile
     with open("cardboardbot.log", "a") as logfile:
         logfile.write(fullmessage + "\n")
+
+    # Don't respond to the MOTD
+    if not len(msg["mucnick"]):
+        return
     
+    # Don't respond to ourself
     if msg["mucnick"] == connection.nick:
         return
 
+    # Respond to mentions
     if connection.nick.lower() in msg["body"].lower():
         logging.debug("Someone said my name!")
 
@@ -273,12 +287,13 @@ def handler(connection, msg):
             return
             
         
-        # Tumblr rant
+        # Tumblr argueing
         if "argue" in msg["body"].lower():
             logging.debug("Someone wants me to argue!")
             connection.send_message(mto=msg["from"].bare, mbody=argue(), mtype="groupchat")
             return
 
+        # Tumblr rant
         if "rant" in msg["body"].lower():
             logging.debug("Someone wants me to rant!")
             connection.send_message(mto=msg["from"].bare, mbody=rant(), mtype="groupchat")
@@ -288,6 +303,7 @@ def handler(connection, msg):
         connection.send_message(mto=msg["from"].bare, mbody=alicemessage(msg["mucnick"], msg["body"]), mtype="groupchat")
         return
 
+    # Handle links in messages
     links = handle_url(timestamp, sender, msg["body"])
     if links:
         connection.send_message(mto=msg["from"].bare, mbody=links, mtype="groupchat")

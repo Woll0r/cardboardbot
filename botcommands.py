@@ -239,7 +239,7 @@ def handler(connection, msg):
     sender = msg["mucnick"]
     
     # Print nicknames -> JID
-    if len(msg["mucnick"]:
+    if len(msg["mucnick"]):
         jid = get_user_jid(connection, msg["mucnick"])
         affiliation = get_user_affiliation(connection, msg["mucnick"])
         nick_jid_conversion = msg["mucnick"] + " = " + jid + " is a " + affiliation

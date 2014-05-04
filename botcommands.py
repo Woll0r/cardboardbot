@@ -24,7 +24,7 @@ import time
 brain = aiml.Kernel()
 
 # Define actions that can be performed that warrant a specific response
-niceActions = ["snuggles", "cuddles", "kisses", "kissies", "nuzzles", "hugs", "loves", "licks", "rubs", "sniffs", "paws", "earnoms", "smooches", "walks up to", "looks at", "boops"]
+niceActions = ["snuggles", "cuddles", "kisses", "kissies", "nuzzles", "hugs", "loves", "licks", "rubs", "sniffs", "paws", "earnoms", "smooches", "walks up to", "looks at", "boops", "pats"]
 sexActions = ["yiffs", "rapes", "sexes", "fingers", "fucks", "humps"]
 
 def get_user_affiliation(connection, nick):
@@ -238,6 +238,9 @@ def handler(connection, msg):
     timestamp = int(time.time())
     sender = msg["mucnick"]
     
+    for room in connection.rooms:
+        logging.info(room)
+    
     # Log messages in the database
     try:
         con = sqlite3.connect('cardboardlog.db')
@@ -249,6 +252,14 @@ def handler(connection, msg):
     except sqlite3.Error as e:
         if con:
             con.rollback()
+        connection.send_message(mto=msg["from"].bare, mbody=":sweetiesiren: My code is problematic! :sweetiesiren:", mtype="groupchat")
+        connection.send_message(mto=msg["from"].bare, mbody=":sweetiesiren: My code is problematic! :sweetiesiren:", mtype="groupchat")
+        connection.send_message(mto=msg["from"].bare, mbody=":sweetiesiren: My code is problematic! :sweetiesiren:", mtype="groupchat")
+        connection.send_message(mto=msg["from"].bare, mbody=":sweetiesiren: My code is problematic! :sweetiesiren:", mtype="groupchat")
+        connection.send_message(mto=msg["from"].bare, mbody=":sweetiesiren: Fatal error in SQLite processing! :sweetiesiren:", mtype="groupchat")
+        connection.send_message(mto=msg["from"].bare, mbody=":sweetiesiren: " + e.args[0] + " :sweetiesiren:", mtype="groupchat")
+        connection.send_message(mto=msg["from"].bare, mbody=":sweetiesiren: My code is problematic! :sweetiesiren:", mtype="groupchat")
+        connection.send_message(mto=msg["from"].bare, mbody=":sweetiesiren: My code is problematic! :sweetiesiren:", mtype="groupchat")
         connection.send_message(mto=msg["from"].bare, mbody=":sweetiesiren: My code is problematic! :sweetiesiren:", mtype="groupchat")
         logging.critical("Fatal error in SQLite processing: %s" % e.args[0])
         exit(1)

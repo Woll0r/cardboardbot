@@ -238,8 +238,8 @@ def handler(connection, msg):
     timestamp = int(time.time())
     sender = msg["mucnick"]
     
-    for room in connection.rooms:
-        logging.info(room)
+    #for room in connection.rooms:
+    #    logging.info(room)
     
     # Log messages in the database
     try:

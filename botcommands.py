@@ -241,7 +241,7 @@ def handler(connection, msg):
     try:
         affiliation = get_user_affiliation(connection, sender)
         userjid = get_user_jid(connection, sender)
-        logging.info(sender + " has jid " + userjid + " with ffiliation " + affiliation)
+        logging.info(sender + " has jid " + userjid.bare + " with ffiliation " + affiliation)
     except Exception as e:
         logging.warning(e.args[0])
     

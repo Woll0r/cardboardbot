@@ -29,24 +29,24 @@ sexActions = ["yiffs", "rapes", "sexes", "fingers", "fucks", "humps"]
 
 def get_user_affiliation(connection, nick):
     """Get a user's affiliation with the room"""
-    useraffiliation = connection.plugin['xep_0045'].getJidProperty(connection.room, nick, 'affiliation')
+    useraffiliation = connection.plugin['xep_0045'].getJidProperty(connection.channel, nick, 'affiliation')
     return useraffiliation
 
 def get_user_jid(connection, nick):
     """Get the JID from a user based on their nick"""
-    userjid = connection.plugin['xep_0045'].getJidProperty(connection.room, nick, 'jid')
+    userjid = connection.plugin['xep_0045'].getJidProperty(connection.channel, nick, 'jid')
     return userjid
 
 def kick_user(connection, nick):
     """Kick a user from the room"""
     userjid = get_user_jid(connection, nick)
-    kick = connection.plugin['xep_0045'].setRole(connection.room, jid=userjid, affiliation="none")
+    kick = connection.plugin['xep_0045'].setRole(connection.channel, jid=userjid, affiliation="none")
     return kick
 
 def ban_user(connection, nick):
     """Ban a user from the room"""
     userjid = get_user_jid(connection, nick)
-    ban = connection.plugin['xep_0045'].setAffiliation(connection.room, jid=userjid, affiliation="outcast")
+    ban = connection.plugin['xep_0045'].setAffiliation(connection.channel, jid=userjid, affiliation="outcast")
     
 def argue():
     """Tumblr-argueing thanks to Nyctef and his TumblrAAS"""
@@ -238,8 +238,12 @@ def handler(connection, msg):
     timestamp = int(time.time())
     sender = msg["mucnick"]
     
-    #for room in connection.rooms:
-    #    logging.info(room)
+    try:
+        affiliation = get_user_affiliation(connection, sender)
+        userjid = get_user_jid(connection, sender)
+        logging.info(sender + " has jid " + userjid + " with ffiliation " + affiliation)
+    except Exception as e:
+        logging.warning(e.args[0])
     
     # Log messages in the database
     try:

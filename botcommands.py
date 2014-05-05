@@ -24,8 +24,8 @@ import time
 brain = aiml.Kernel()
 
 # Define actions that can be performed that warrant a specific response
-niceActions = ["snuggles", "cuddles", "kisses", "kissies", "nuzzles", "hugs", "loves", "licks", "rubs", "sniffs", "paws", "earnoms", "smooches", "walks up to", "looks at", "boops", "pats"]
-sexActions = ["yiffs", "rapes", "sexes", "fingers", "fucks", "humps"]
+#niceActions = ["snuggles", "cuddles", "kisses", "kissies", "nuzzles", "hugs", "loves", "licks", "rubs", "sniffs", "paws", "earnoms", "smooches", "walks up to", "looks at", "boops", "pats"]
+#sexActions = ["yiffs", "rapes", "sexes", "fingers", "fucks", "humps"]
 
 def get_user_affiliation(connection, nick):
     """Get a user's affiliation with the room"""
@@ -162,6 +162,22 @@ def sextuch(nick):
 
 def tuch(nick, body):
     """Someone does something to me, decide what to do with them"""
+    niceActions = []
+    sexActions = []
+    db = sqlite3.connect('/home/wolfgang/cardboardenv/cardboardbot/cardboardlog.db')
+    c = db.cursor()
+    c.execute("SELECT action FROM cardboardactions WHERE type='nice'")
+    nice = c.fetchall()
+    for action in nice:
+        niceActions.add(action[0])
+    
+    c.execute("SELECT action FROM cardboardactions WHERE type='sex'")
+    sex = c.fetchall()
+    for action in sex:
+        sexActions.add(action[0])
+    
+    c.close()
+    
     if "pets" in body.lower():
         logging.debug("%s is petting me!" % nick)
         return "/me purrs :sweetiepleased:"
@@ -247,9 +263,9 @@ def handler(connection, msg):
         affiliation = get_user_affiliation(connection, sender)
         role = get_user_role(connection, sender)
         userjid = get_user_jid(connection, sender)
-        logging.info(sender + " " + userjid.user + " " + affiliation + " " + role)
+        logging.debug(sender + " " + userjid.bare + " " + affiliation + " " + role)
     except Exception as e:
-        logging.warning(e.args[0])
+        pass
     
     # Log messages in the database
     try:

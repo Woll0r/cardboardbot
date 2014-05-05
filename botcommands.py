@@ -169,12 +169,12 @@ def tuch(nick, body):
     c.execute("SELECT action FROM cardboardactions WHERE type='nice'")
     nice = c.fetchall()
     for action in nice:
-        niceActions.add(action[0])
+        niceActions.append(action[0])
     
     c.execute("SELECT action FROM cardboardactions WHERE type='sex'")
     sex = c.fetchall()
     for action in sex:
-        sexActions.add(action[0])
+        sexActions.append(action[0])
     
     c.close()
     

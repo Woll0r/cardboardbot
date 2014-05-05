@@ -37,6 +37,11 @@ def get_user_jid(connection, nick):
     userjid = connection.plugin['xep_0045'].getJidProperty(connection.channel, nick, 'jid')
     return userjid
 
+def get_user_role(connection, nick):
+    """Get a user's affiliation with the room"""
+    userrole = connection.plugin['xep_0045'].getJidProperty(connection.channel, nick, 'role')
+    return userrole
+
 def kick_user(connection, nick):
     """Kick a user from the room"""
     userjid = get_user_jid(connection, nick)
@@ -240,8 +245,9 @@ def handler(connection, msg):
     
     try:
         affiliation = get_user_affiliation(connection, sender)
+        role = get_user_role(connection, sender)
         userjid = get_user_jid(connection, sender)
-        logging.info(sender + " has jid " + userjid.bare + " with ffiliation " + affiliation)
+        logging.info(sender + " " + userjid.user + " " + affiliation + " " + role)
     except Exception as e:
         logging.warning(e.args[0])
     

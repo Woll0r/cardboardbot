@@ -259,7 +259,7 @@ def handler(connection, msg):
         affiliation = get_user_affiliation(connection, sender)
         role = get_user_role(connection, sender)
         userjid = get_user_jid(connection, sender)
-        logging.info(sender + " " + userjid.bare + " " + affiliation + " " + role)
+        logging.debug(sender + " " + userjid.bare + " " + affiliation + " " + role)
     except Exception as e:
         pass
     
@@ -286,8 +286,8 @@ def handler(connection, msg):
             con.close() 
 
     # Write into the logfile
-    with open("cardboardbot.log", "a") as logfile:
-        logfile.write(fullmessage + "\n")
+    #with open("cardboardbot.log", "a") as logfile:
+    #    logfile.write(fullmessage + "\n")
 
     # Don't respond to the MOTD
     if not len(msg["mucnick"]):

@@ -57,15 +57,15 @@ if __name__ == '__main__':
     optp = OptionParser()
 
     # Output verbosity options.
-    optp.add_option('-q', '--quiet', help='set logging to ERROR',
-                    action='store_const', dest='loglevel',
-                    const=logging.ERROR, default=logging.INFO)
-    optp.add_option('-d', '--debug', help='set logging to DEBUG',
-                    action='store_const', dest='loglevel',
-                    const=logging.DEBUG, default=logging.INFO)
-    optp.add_option('-v', '--verbose', help='set logging to COMM',
-                    action='store_const', dest='loglevel',
-                    const=5, default=logging.INFO)
+    #optp.add_option('-q', '--quiet', help='set logging to ERROR',
+    #                action='store_const', dest='loglevel',
+    #                const=logging.ERROR, default=logging.INFO)
+    #optp.add_option('-d', '--debug', help='set logging to DEBUG',
+    #                action='store_const', dest='loglevel',
+    #                const=logging.DEBUG, default=logging.INFO)
+    #optp.add_option('-v', '--verbose', help='set logging to COMM',
+    #                action='store_const', dest='loglevel',
+    #                const=5, default=logging.INFO)
 
     # JID and password options.
     optp.add_option("-j", "--jid", dest="jid",
@@ -80,8 +80,15 @@ if __name__ == '__main__':
     opts, args = optp.parse_args()
 
     # Setup logging.
-    logging.basicConfig(level=opts.loglevel,
-                        format='%(levelname)-8s %(message)s')
+    logging.basicConfig(level=logging.DEBUG,
+                        format='%(asctime)s %(levelname)-8s %(message)s',
+                        filename='cardboardbot.log',
+                        filemode='w+')
+    console = logging.StreamHandler()
+    console.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(levelname)-8s %(message)s')
+    console.setFormatter(formatter)
+    logging.getLogger('').addHandler(console)
 
     if opts.jid is None:
         try:

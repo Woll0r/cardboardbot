@@ -269,8 +269,17 @@ def handler(connection, msg):
         cur = con.cursor()
         cmd = "INSERT INTO cardboardlog(timestamp, name, message) VALUES(?, ?, ?);"
         if len(msg["mucnick"]):
+            cur.execute(cmd, (timestamp, userjid.bare, msg["body"]))
             logging.debug("Written to database!")
-            cur.execute(cmd, (timestamp, sender, msg["body"]))
+            cmd = "SELECT * FROM cardboardnick WHERE jid = ?"
+            cur.execute(cmd, (userjid.bare))
+            namecheck = cur.fetchone()
+            if namecheck is None:
+                cmd = "INSERT INTO cardboardnick(jid, nick) VALUES(?, ?);"
+                cur.execute(cmd, (userjid.bare, msg['mucnick']))
+                logging.debug("Name not found in database, inserted!")
+            else:
+                logging.debug("This person exists in the database")
     except sqlite3.Error as e:
         if con:
             con.rollback()

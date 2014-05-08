@@ -273,7 +273,7 @@ def handler(connection, msg):
             logging.debug("Written to database!")
             logging.debug("Checking if name is in the database...")
             cmd = "SELECT * FROM cardboardnick WHERE jid = ?;"
-            cur.execute(cmd, (userjid.bare, )
+            cur.execute(cmd, (userjid.bare, ))
             logging.debug("Checking if name is in the database...")
             namecheck = cur.fetchone()
             if namecheck is None:

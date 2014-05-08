@@ -344,7 +344,7 @@ def handler(connection, msg):
         return
 
     # Handle links in messages
-    links = handle_url(timestamp, sender, msg["body"])
+    links = handle_url(timestamp, userjid.bare, msg["body"])
     if links:
         connection.send_message(mto=msg["from"].bare, mbody=links, mtype="groupchat")
         

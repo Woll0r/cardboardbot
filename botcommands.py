@@ -271,10 +271,13 @@ def handler(connection, msg):
         if len(msg["mucnick"]):
             cur.execute(cmd, (timestamp, userjid.bare, msg["body"]))
             logging.debug("Written to database!")
-            cmd = "SELECT * FROM cardboardnick WHERE jid = ?"
+            logging.debug("Checking if name is in the database...")
+            cmd = "SELECT * FROM cardboardnick WHERE jid = ?;"
             cur.execute(cmd, (userjid.bare))
+            logging.debug("Checking if name is in the database...")
             namecheck = cur.fetchone()
             if namecheck is None:
+                logging.debug("Name doesn't exist.")
                 cmd = "INSERT INTO cardboardnick(jid, nick) VALUES(?, ?);"
                 cur.execute(cmd, (userjid.bare, msg['mucnick']))
                 logging.debug("Name not found in database, inserted!")

@@ -33,6 +33,9 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         self.nick = nick
         self.channel = channel
 
+        # Disable IPv6 lookups for speed
+        self.use_ipv6 = False
+
         botcommands.brain_start()
 
         # Add event handling for Jabber events

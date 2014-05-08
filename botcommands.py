@@ -259,7 +259,7 @@ def handler(connection, msg):
         affiliation = get_user_affiliation(connection, sender)
         role = get_user_role(connection, sender)
         userjid = get_user_jid(connection, sender)
-        logging.debug(sender + " " + userjid.bare + " " + affiliation + " " + role)
+        logging.debug(sender + " " + userjid.user + " " + affiliation + " " + role)
     except Exception as e:
         pass
     

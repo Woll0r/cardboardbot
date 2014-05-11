@@ -288,7 +288,8 @@ def handler(connection, msg):
         pass
     
     # Log messages in the database
-    databasecommands.insert_in_messages_table(timestamp, msg["mucnick"], userjid.bare, msg["body"])
+    if userjid is not None:
+        databasecommands.insert_in_messages_table(timestamp, msg["mucnick"], userjid.bare, msg["body"])
 
     # Write into the logfile
     #with open("cardboardbot.log", "a") as logfile:

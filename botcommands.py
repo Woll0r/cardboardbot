@@ -17,7 +17,7 @@ import aiml
 import os.path
 
 # Needed for logging into SQLite
-import sqlite3
+import databasecommands
 import time
 
 # Initialize Alice

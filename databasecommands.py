@@ -21,7 +21,7 @@ def get_actions(type):
     c.close()
 
 def insert_into_messages_table(timestamp, nick, jid, message):
-	try:
+    try:
         con = sqlite3.connect('cardboardlog.db')
         cur = con.cursor()
         cmd = "INSERT INTO cardboardlog(timestamp, name, message) VALUES(?, ?, ?);"
@@ -48,7 +48,7 @@ def insert_into_messages_table(timestamp, nick, jid, message):
         if con:
             con.commit()
             con.close() 
-			
+            
 def insert_in_link_table(timestamp, sender, url, title):
     try:
         con = sqlite3.connect('cardboardlog.db')

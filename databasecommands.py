@@ -21,7 +21,7 @@ def get_actions(type):
         actions.append(action[0])
     c.close()
 
-def insert_into_messages_table(timestamp, nick, jid, message):
+def insert_in_messages_table(timestamp, nick, jid, message):
     try:
         con = sqlite3.connect('cardboardlog.db')
         cur = con.cursor()

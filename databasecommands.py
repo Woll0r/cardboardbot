@@ -31,12 +31,12 @@ def insert_in_messages_table(timestamp, nick, jid, message):
             log.debug("Written to database!")
             log.debug("Checking if name is in the database...")
             cmd = "SELECT * FROM cardboardnick WHERE jid = ?;"
-            cur.execute(cmd, (userjid, ))
+            cur.execute(cmd, (jid, ))
             namecheck = cur.fetchone()
             if namecheck is None:
                 log.debug("Name doesn't exist.")
                 cmd = "INSERT INTO cardboardnick(jid, nick) VALUES(?, ?);"
-                cur.execute(cmd, (userjid, nick))
+                cur.execute(cmd, (jid, nick))
                 logging.debug("Name not found in database, inserted!")
             else:
                 log.debug("This person exists in the database")

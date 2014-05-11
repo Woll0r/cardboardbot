@@ -23,6 +23,9 @@ import time
 # Initialize Alice
 brain = aiml.Kernel()
 
+xmpplogging = logging.getLogger('xmppbot')
+sqllogging = logging.getLogger('sqlite')
+
 def get_user_affiliation(connection, nick):
     """Get a user's affiliation with the room"""
     useraffiliation = connection.plugin['xep_0045'].getJidProperty(connection.channel, nick, 'affiliation')
@@ -38,16 +41,59 @@ def get_user_role(connection, nick):
     userrole = connection.plugin['xep_0045'].getJidProperty(connection.channel, nick, 'role')
     return userrole
 
-def kick_user(connection, nick):
+def kick_user(connection, nick, sender, room):
     """Kick a user from the room"""
+    senderrole = get_user_role(sender)
+    receiverrole = get_user_role(nick)
+    if senderrole is not 'moderator':
+        xmpplogging.debug("Kick requested by %s failed because they are not a moderator" % sender)
+        connection.send_message(mto=room, mbody="I'm sorry, %s, I can't let you do that. :sweetiestare:" % sender, mtype="groupchat")
+        return
+    if receiverrole is 'moderator':
+        xmpplogging.debug("Kick requested by %s failed because target %s is a moderator" %(sender, nick))
+        connection.send_message(mto=room, mbody="I'm sorry, %s, I can't let you do that. :sweetiestare:" % sender, mtype="groupchat")
+        return
     userjid = get_user_jid(connection, nick)
-    kick = connection.plugin['xep_0045'].setRole(connection.channel, jid=userjid, affiliation="none")
-    return kick
+    xmpplogging.debug("Attempting to kick %s" % nick)
+    kick = connection.plugin['xep_0045'].setRole(connection.channel, jid=userjid.bare, affiliation="none")
 
-def ban_user(connection, nick):
+def ban_user(connection, nick, sender, room):
     """Ban a user from the room"""
+    senderrole = get_user_role(sender)
+    receiverrole = get_user_role(nick)
+    if senderrole is not 'moderator':
+        xmpplogging.debug("Kick requested by %s failed because they are not a moderator" % sender)
+        connection.send_message(mto=room, mbody="I'm sorry, %s, I can't let you do that. :sweetiestare:" % sender, mtype="groupchat")
+        return
+    if receiverrole is 'moderator':
+        xmpplogging.debug("Kick requested by %s failed because target %s is a moderator" %(sender, nick))
+        connection.send_message(mto=room, mbody="I'm sorry, %s, I can't let you do that. :sweetiestare:" % sender, mtype="groupchat")
+        return
     userjid = get_user_jid(connection, nick)
-    ban = connection.plugin['xep_0045'].setAffiliation(connection.channel, jid=userjid, affiliation="outcast")
+    xmpplogging.debug("Would ban " + userjid.bare)
+    connection.send_message(mto=room, mbody="*** WARNING ***", mtype="groupchat")
+    connection.send_message(mto=room, mbody="There is no way to reverse a ban on %s through this bot." % nick, mtype="groupchat")
+    connection.send_message(mto=room, mbody="Not actually banning, just kicking instead.", mtype="groupchat")
+    kick = connection.plugin['xep_0045'].setRole(connection.channel, jid=userjid.bare, affiliation="none")
+    
+def really_ban_user(connection, nick, sender, room):
+    """Ban a user from the room"""
+    senderrole = get_user_role(sender)
+    receiverrole = get_user_role(nick)
+    if senderrole is not 'moderator':
+        xmpplogging.debug("Kick requested by %s failed because they are not a moderator" % sender)
+        connection.send_message(mto=room, mbody="I'm sorry, %s, I can't let you do that. :sweetiestare:" % sender, mtype="groupchat")
+        return
+    if receiverrole is 'moderator':
+        xmpplogging.debug("Kick requested by %s failed because target %s is a moderator" %(sender, nick))
+        connection.send_message(mto=room, mbody="I'm sorry, %s, I can't let you do that. :sweetiestare:" % sender, mtype="groupchat")
+        return
+    userjid = get_user_jid(connection, nick)
+    xmpplogging.debug("Attempting to ban " + userjid.bare)
+    connection.send_message(mto=room, mbody="*** WARNING ***", mtype="groupchat")
+    connection.send_message(mto=room, mbody="There is no way to reverse a ban on %s through this bot.", mtype="groupchat")
+    connection.send_message(mto=room, mbody="Actually banning this time, because you mean it." % userjid.bare, mtype="groupchat")
+    ban = connection.plugin['xep_0045'].setAffiliation(connection.channel, jid=userjid.bare, affiliation="outcast")
     
 def argue():
     """Tumblr-argueing thanks to Nyctef and his TumblrAAS"""
@@ -68,14 +114,14 @@ def brain_start():
     Afterwards, the memories will be loaded so the bot gets her identity"""
     if os.path.isfile("standard.brn"):
 	    # Brain is available, load it
-        logging.info("Found my brain, loading it now!")
+        xmpplogging.info("Found my brain, loading it now!")
         brain.bootstrap(brainFile = "standard.brn")
     else:
 	    # No brain file, so we create one.
-        logging.info("Didn't find my brain, generating a new one!")
+        xmpplogging.info("Didn't find my brain, generating a new one!")
         brain.bootstrap(learnFiles = "aiml/std-startup.xml", commands = "load aiml b")
         brain.saveBrain("standard.brn")
-    logging.info("Brain loaded. Now setting all my memories!")
+    xmpplogging.info("Brain loaded. Now setting all my memories!")
     memoryfile = file('personality.yaml', 'r')
     memories = yaml.load(memoryfile)
     for k, v in memories.items():
@@ -87,7 +133,7 @@ def imgur_filter(link):
     match = imgurregex.match(link)
     if (match):
         replacement = 'http://imgur.com/'+match.group(2)
-        logging.debug("replacing "+link+" with "+replacement)
+        xmpplogging.debug("replacing "+link+" with "+replacement)
         return replacement
     return link
 
@@ -97,7 +143,7 @@ def e621_filter(link):
     match = e621regex.match(link)
     if (match):
         replacement = 'https://e621.net/post/show?md5='+match.group(4)
-        logging.debug("replacing "+link+" with "+replacement)
+        xmpplogging.debug("replacing "+link+" with "+replacement)
         return replacement
     return link
     
@@ -107,7 +153,7 @@ def deviantart_filter(link):
     match = deviantartregex.match(link)
     if (match):
         replacement = 'http://www.deviantart.com/#/' + match.group(5)
-        logging.debug("replacing "+link+" with "+replacement)
+        xmpplogging.debug("replacing "+link+" with "+replacement)
         return replacement
     return link
 
@@ -160,6 +206,7 @@ def tuch(nick, body):
     """Someone does something to me, decide what to do with them"""
     niceActions = []
     sexActions = []
+    sqllogging.debug("Getting actions from database")
     db = sqlite3.connect('/home/wolfgang/cardboardenv/cardboardbot/cardboardlog.db')
     c = db.cursor()
     c.execute("SELECT action FROM cardboardactions WHERE type='nice'")
@@ -175,21 +222,21 @@ def tuch(nick, body):
     c.close()
     
     if "pets" in body.lower():
-        logging.debug("%s is petting me!" % nick)
+        xmpplogging.debug("%s is petting me!" % nick)
         return "/me purrs :sweetiepleased:"
     if [i for i in niceActions if i in body.lower()]:
-        logging.debug("%s is doing nice things to me!" % nick)
+        xmpplogging.debug("%s is doing nice things to me!" % nick)
         return goodtuch(nick)
     if [i for i in sexActions if i in body.lower()]:
-        logging.debug("%s is doing sex things to me!" % nick)
+        xmpplogging.debug("%s is doing sex things to me!" % nick)
         return sextuch(nick)
     else:
-        logging.debug("%s is doing bad things to me!" % nick)
+        xmpplogging.debug("%s is doing bad things to me!" % nick)
         return badtuch(nick)
     
 def alicemessage(nick, body):
     """Generate a response using Alice AI subroutines"""
-    logging.debug("I don't know what %s is saying, so I'll let Alice respond for me!" % nick)
+    xmpplogging.debug("I don't know what %s is saying, so I'll let Alice respond for me!" % nick)
     if body.startswith(config.nick + ": "):
         body = body.replace(config.nick + ": ", "", 1)
     
@@ -208,14 +255,14 @@ def handle_url(timestamp, sender, body):
     matches = map(e621_filter, matches)
     # matches = map(deviantart_filter, matches)                      # Doesn't work properly and makes normal ones barf.
     if matches:
-        logging.debug("I think I see an URL! " + " / ".join(matches))
+        xmpplogging.debug("I think I see an URL! " + " / ".join(matches))
         results = []
         from bs4 import BeautifulSoup
         for match in matches:
             try:
                 res = requests.get(match, timeout=5)
                 if not 'html' in res.headers['content-type']:
-                    logging.debug("%s isn't HTML!" % match)
+                    xmpplogging.debug("%s isn't HTML!" % match)
                     insert_in_linktable(timestamp, sender, match, match)
                 else:
                     soup = BeautifulSoup(res.text)
@@ -223,7 +270,7 @@ def handle_url(timestamp, sender, body):
                     insert_in_linktable(timestamp, sender, match, title)
                     results.append(title)
             except Exception as e:
-                logging.debug("Error fetching url "+match+" : "+str(e))
+                xmpplogging.debug("Error fetching url "+match+" : "+str(e))
                 pass
         if not len(results):
             # no results
@@ -240,7 +287,7 @@ def insert_in_linktable(timestamp, sender, url, title):
     except sqlite3.Error as e:
         if con:
             con.rollback()
-        logging.critical("Fatal error in SQLite processing: %s" % e.args[0])
+        sqllogging.critical("Fatal error in SQLite processing: %s" % e.args[0])
         exit(1)
     finally:
         if con:
@@ -250,7 +297,7 @@ def insert_in_linktable(timestamp, sender, url, title):
 def handler(connection, msg):
     """Handle incoming messages"""
     fullmessage = msg["mucnick"].ljust(25) + ": " + msg["body"]
-    logging.info(fullmessage)
+    xmpplogging.info(fullmessage)
 
     timestamp = int(time.time())
     sender = msg["mucnick"]
@@ -259,7 +306,7 @@ def handler(connection, msg):
         affiliation = get_user_affiliation(connection, sender)
         role = get_user_role(connection, sender)
         userjid = get_user_jid(connection, sender)
-        logging.debug(sender + " " + userjid.user + " " + affiliation + " " + role)
+        xmpplogging.debug(sender + " " + userjid.user + " " + affiliation + " " + role)
     except Exception as e:
         pass
     
@@ -270,19 +317,18 @@ def handler(connection, msg):
         cmd = "INSERT INTO cardboardlog(timestamp, name, message) VALUES(?, ?, ?);"
         if len(msg["mucnick"]):
             cur.execute(cmd, (timestamp, userjid.bare, msg["body"]))
-            logging.debug("Written to database!")
-            logging.debug("Checking if name is in the database...")
+            sqllogging.debug("Written to database!")
+            sqllogging.debug("Checking if name is in the database...")
             cmd = "SELECT * FROM cardboardnick WHERE jid = ?;"
             cur.execute(cmd, (userjid.bare, ))
-            logging.debug("Checking if name is in the database...")
             namecheck = cur.fetchone()
             if namecheck is None:
-                logging.debug("Name doesn't exist.")
+                sqllogging.debug("Name doesn't exist.")
                 cmd = "INSERT INTO cardboardnick(jid, nick) VALUES(?, ?);"
                 cur.execute(cmd, (userjid.bare, msg['mucnick']))
                 logging.debug("Name not found in database, inserted!")
             else:
-                logging.debug("This person exists in the database")
+                sqllogging.debug("This person exists in the database")
     except sqlite3.Error as e:
         if con:
             con.rollback()
@@ -290,7 +336,7 @@ def handler(connection, msg):
         connection.send_message(mto=msg["from"].bare, mbody=":sweetiesiren: Fatal error in SQLite processing! :sweetiesiren:", mtype="groupchat")
         connection.send_message(mto=msg["from"].bare, mbody=":sweetiesiren: " + e.args[0] + " :sweetiesiren:", mtype="groupchat")
         connection.send_message(mto=msg["from"].bare, mbody=":sweetiesiren: My code is problematic! :sweetiesiren:", mtype="groupchat")
-        logging.critical("Fatal error in SQLite processing: %s" % e.args[0])
+        sqllogging.critical("Fatal error in SQLite processing: %s" % e.args[0])
         exit(1)
     finally:
         if con:
@@ -311,7 +357,7 @@ def handler(connection, msg):
 
     # Respond to mentions
     if connection.nick.lower() in msg["body"].lower():
-        logging.debug("Someone said my name!")
+        xmpplogging.debug("Someone said my name!")
 
         # C/D mode
         if msg["body"].lower().endswith("c/d") or msg["body"].lower().endswith("c/d?"):
@@ -322,20 +368,20 @@ def handler(connection, msg):
         
         # Someone does things to me!
         if msg["body"].lower().startswith("/me"):
-            logging.debug("I am being touched by %s!" % msg["mucnick"])
+            xmpplogging.debug("I am being touched by %s!" % msg["mucnick"])
             connection.send_message(mto=msg["from"].bare, mbody=tuch(msg["mucnick"], msg["body"]), mtype="groupchat")
             return
             
         
         # Tumblr argueing
         if "argue" in msg["body"].lower():
-            logging.debug("Someone wants me to argue!")
+            xmpplogging.debug("Someone wants me to argue!")
             connection.send_message(mto=msg["from"].bare, mbody=argue(), mtype="groupchat")
             return
 
         # Tumblr rant
         if "rant" in msg["body"].lower():
-            logging.debug("Someone wants me to rant!")
+            xmpplogging.debug("Someone wants me to rant!")
             connection.send_message(mto=msg["from"].bare, mbody=rant(), mtype="groupchat")
             return
 

@@ -84,12 +84,12 @@ if __name__ == '__main__':
 
     # Setup logging.
     logging.basicConfig(level=logging.DEBUG,
-                        format='%(asctime)s %(levelname)-8s %(message)s',
+                        format='%(asctime)s %(levelname)-8s %(name)-10s %(message)s',
                         filename='cardboardbot.log',
                         filemode='w+')
     console = logging.StreamHandler()
     console.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(levelname)-8s %(message)s')
+    formatter = logging.Formatter('%(levelname)-8s %(name)-10s %(message)s')
     console.setFormatter(formatter)
     logging.getLogger('').addHandler(console)
 

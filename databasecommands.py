@@ -26,7 +26,7 @@ def insert_in_messages_table(timestamp, nick, jid, message):
         con = sqlite3.connect('cardboardlog.db')
         cur = con.cursor()
         cmd = "INSERT INTO cardboardlog(timestamp, name, message) VALUES(?, ?, ?);"
-        if len(name):
+        if len(nick):
             cur.execute(cmd, (timestamp, jid, message))
             log.debug("Written to database!")
             log.debug("Checking if name is in the database...")

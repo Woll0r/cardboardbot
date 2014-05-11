@@ -21,6 +21,8 @@ if sys.version_info < (3, 0):
 else:
     raw_input = input
 
+log = logging.getLogger(__name__)
+    
 class CardboardBot(sleekxmpp.ClientXMPP):
     # Class constructor
     def __init__(self, jid, password, nick, channel):
@@ -84,12 +86,12 @@ if __name__ == '__main__':
 
     # Setup logging.
     logging.basicConfig(level=logging.DEBUG,
-                        format='%(asctime)s %(levelname)-8s %(name)-10s %(message)s',
+                        format='%(asctime)s %(levelname)-8s %(name) - %(message)s',
                         filename='cardboardbot.log',
                         filemode='w+')
     console = logging.StreamHandler()
     console.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(levelname)-8s %(name)-10s %(message)s')
+    formatter = logging.Formatter('%(levelname)-8s %(name) - %(message)s')
     console.setFormatter(formatter)
     logging.getLogger('').addHandler(console)
 
@@ -97,25 +99,25 @@ if __name__ == '__main__':
         try:
             opts.jid = config.jid
         except NameError:
-            logging.critical("I require a JID!")
+            log.critical("I require a JID!")
             exit(1)
     if opts.password is None:
         try:
             opts.password = config.password
         except NameError:
-            logging.critical("I require a password!")
+            log.critical("I require a password!")
             exit(1)
     if opts.nick is None:
         try:
             opts.nick = config.nick
         except NameError:
-            logging.critical("I require a nick!")
+            log.critical("I require a nick!")
             exit(1)
     if opts.channel is None:
         try:
             opts.channel = config.channel
         except NameError:
-            logging.critical("I require a channel!")
+            log.critical("I require a channel!")
             exit(1)
 
     # Set up the bot and it's required XMPP things
@@ -132,4 +134,4 @@ if __name__ == '__main__':
     if xmpp.connect():
         xmpp.process(block=True)
     else:
-        logging.critical("Unable to connect!")
+        log.critical("Unable to connect!")

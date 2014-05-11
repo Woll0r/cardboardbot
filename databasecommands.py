@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import config # Get config
+import logging
 
 # Needed for logging into SQLite
 import sqlite3

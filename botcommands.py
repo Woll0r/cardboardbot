@@ -44,15 +44,15 @@ def kick_user(connection, nick, sender, room):
     """Kick a user from the room"""
     senderrole = get_user_role(connection, sender)
     receiverrole = get_user_role(connection, nick)
-    if  receiverrole is None:
+    if receiverrole is None:
         log.debug("Kick requested by %s failed because target %s is not in the room" %(sender, nick))
         connection.send_message(mto=room, mbody="I'm sorry, %s, I can't find %s in the room. :sweetiestare:" % (sender, nick))
         return
-    if senderrole is not 'moderator':
+    if str(senderrole) is not 'moderator':
         log.debug("Kick requested by %s failed because they are not a moderator" % sender)
         connection.send_message(mto=room, mbody="I'm sorry, %s, I can't let you do that. :sweetiestare:" % sender, mtype="groupchat")
         return
-    if receiverrole is 'moderator':
+    if str(receiverrole) is 'moderator':
         log.debug("Kick requested by %s failed because target %s is a moderator" %(sender, nick))
         connection.send_message(mto=room, mbody="I'm sorry, %s, I can't let you do that. :sweetiestare:" % sender, mtype="groupchat")
         return
@@ -311,7 +311,8 @@ def handler(connection, msg):
         if "!kick" in msg["body"].lower():
             log.debug("Kick command detected")
             to_kick = msg["body"].split("!kick ")[-1]
-            kick_user(connection, to_kick, msg["mucnick"], msg["from"])
+            kick_user(connection, to_kick, msg["mucnick"], msg["from"].bare)
+            return
         
         # C/D mode
         if msg["body"].lower().endswith("c/d") or msg["body"].lower().endswith("c/d?"):

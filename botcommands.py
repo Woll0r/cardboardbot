@@ -42,8 +42,8 @@ def get_user_role(connection, nick):
 
 def kick_user(connection, nick, sender, room):
     """Kick a user from the room"""
-    senderrole = get_user_role(sender)
-    receiverrole = get_user_role(nick)
+    senderrole = get_user_role(connection, sender)
+    receiverrole = get_user_role(connection, nick)
     if  receiverrole is None:
         log.debug("Kick requested by %s failed because target %s is not in the room" %(sender, nick))
         connection.send_message(mto=room, mbody="I'm sorry, %s, I can't find %s in the room. :sweetiestare:" % (sender, nick))
@@ -72,8 +72,8 @@ def kick_user(connection, nick, sender, room):
     
 def ban_user(connection, nick, sender, room):
     """Ban a user from the room"""
-    senderrole = get_user_role(sender)
-    receiverrole = get_user_role(nick)
+    senderrole = get_user_role(connection, sender)
+    receiverrole = get_user_role(connection, nick)
     if  receiverrole is None:
         log.debug("Ban requested by %s failed because target %s is not in the room" %(sender, nick))
         connection.send_message(mto=room, mbody="I'm sorry, %s, I can't find %s in the room. :sweetiestare:" % (sender, nick))

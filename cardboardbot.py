@@ -27,6 +27,7 @@ class CardboardBot(sleekxmpp.ClientXMPP):
     # Class constructor
     def __init__(self, jid, password, nick, channel):
         # Set parameters for SleekXMPP
+        log.debug("Initiating CardboardBot by setting my own parameters...")
         super(CardboardBot, self).__init__(jid, password)
 
         # Configure my own parameters
@@ -38,14 +39,17 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         # Disable IPv6 lookups for speed
         self.use_ipv6 = False
 
+        log.debug("Start up my brain...")
         botcommands.brain_start()
 
         # Add event handling for Jabber events
+        log.debug("Initialize event handlers...")
         self.add_event_handler("session_start", self.start)
         self.add_event_handler("groupchat_message", self.groupchatmessage)
 
     # Handle the start event (connection to Jabber)
     def start(self, event):
+        log.debug("Connection established, saying hello to the server")
         # Announce our presence to the Jabber server so it knows we're connected
         self.send_presence()
         # Get our friends list (also makes the server know we're really connected)
@@ -54,7 +58,7 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         self.plugin['xep_0045'].joinMUC(self.channel, self.nick, wait=False)
 
     def groupchatmessage(self, event):
-        logging.debug("I got a message! Sending to handler!")
+        log.debug("I got a message! Sending to handler!")
         botcommands.handler(self, event)
 
 if __name__ == '__main__':

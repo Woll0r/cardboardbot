@@ -48,11 +48,11 @@ def kick_user(connection, nick, sender, room):
         log.debug("Kick requested by %s failed because target %s is not in the room" %(sender, nick))
         connection.send_message(mto=room, mbody="I'm sorry, %s, I can't find %s in the room. :sweetiestare:" % (sender, nick))
         return
-    if str(senderrole) is not 'moderator':
+    if senderrole != 'moderator':
         log.debug("Kick requested by %s failed because they are not a moderator" % sender)
         connection.send_message(mto=room, mbody="I'm sorry, %s, I can't let you do that. :sweetiestare:" % sender, mtype="groupchat")
         return
-    if str(receiverrole) is 'moderator':
+    if receiverrole == 'moderator':
         log.debug("Kick requested by %s failed because target %s is a moderator" %(sender, nick))
         connection.send_message(mto=room, mbody="I'm sorry, %s, I can't let you do that. :sweetiestare:" % sender, mtype="groupchat")
         return
@@ -78,11 +78,11 @@ def ban_user(connection, nick, sender, room):
         log.debug("Ban requested by %s failed because target %s is not in the room" %(sender, nick))
         connection.send_message(mto=room, mbody="I'm sorry, %s, I can't find %s in the room. :sweetiestare:" % (sender, nick))
         return
-    if senderrole is not 'moderator':
+    if senderrole != 'moderator':
         log.debug("Ban requested by %s failed because they are not a moderator" % sender)
         connection.send_message(mto=room, mbody="I'm sorry, %s, I can't let you do that. :sweetiestare:" % sender, mtype="groupchat")
         return
-    if receiverrole is 'moderator':
+    if receiverrole == 'moderator':
         log.debug("Ban requested by %s failed because target %s is a moderator" %(sender, nick))
         connection.send_message(mto=room, mbody="I'm sorry, %s, I can't let you do that. :sweetiestare:" % sender, mtype="groupchat")
         return

@@ -12,14 +12,22 @@ log = logging.getLogger(__name__)
 
 def get_actions(type):
     actions = []
-    con = sqlite3.connect('/home/wolfgang/cardboardenv/cardboardbot/cardboardlog.db')
-    cur = con.cursor()
-    cmd = "SELECT action FROM cardboardactions WHERE type=?;"
-    cur.execute(cmd, (type, ))
-    results = c.fetchall()
-    for action in results:
-        actions.append(action[0])
-    c.close()
+    try:
+        con = sqlite3.connect('/home/wolfgang/cardboardenv/cardboardbot/cardboardlog.db')
+        cur = con.cursor()
+        cmd = "SELECT action FROM cardboardactions WHERE type=?;"
+        cur.execute(cmd, (type, ))
+        results = cur.fetchall()
+        for action in results:
+            actions.append(action[0])
+    except sqlite3.Error as e:
+        if con:
+            con.rollback()
+        log.warning("Error in SQLite processing: %s" % e.args[0])
+    finally:
+        if con:
+            con.close()
+    return actions
 
 def insert_in_messages_table(timestamp, nick, jid, message):
     try:

@@ -314,6 +314,21 @@ def handler(connection, msg):
             kick_user(connection, to_kick, msg["mucnick"], msg["from"].bare)
             return
         
+        if "deminu" in msg["body"].lower():
+            log.debug("Deminu detected")
+            roulette = random.randint(1, 10)
+            if roulette == 10:
+                log.debug("Rolled a 10! Kicking!")
+                connection.send_message(mto=msg["from"].bare,
+                                    mbody=badtuch(msg["mucnick"]),
+                                    mtype="groupchat")
+                kick_user(connection, msg["mucnick"], connection.nick, msg["from"].bare)
+            else:
+                log.debug("Didn't roll a 10, just doing a badtuch")
+                connection.send_message(mto=msg["from"].bare,
+                                    mbody=badtuch(msg["mucnick"]),
+                                    mtype="groupchat")
+        
         # C/D mode
         if msg["body"].lower().endswith("c/d") or msg["body"].lower().endswith("c/d?"):
             log.debug("Confirm/deny detected")

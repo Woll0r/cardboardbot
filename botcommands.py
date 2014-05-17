@@ -328,6 +328,7 @@ def handler(connection, msg):
                 connection.send_message(mto=msg["from"].bare,
                                     mbody=badtuch(msg["mucnick"]),
                                     mtype="groupchat")
+            return
         
         # C/D mode
         if msg["body"].lower().endswith("c/d") or msg["body"].lower().endswith("c/d?"):

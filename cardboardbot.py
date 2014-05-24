@@ -46,15 +46,18 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         log.debug("Initialize event handlers...")
         self.add_event_handler("session_start", self.start)
         self.add_event_handler("groupchat_message", self.groupchatmessage)
+        
+        self.register_plugin('xep_0030') # Service Discovery
+        self.register_plugin('xep_0004') # Data Forms
+        self.register_plugin('xep_0045') # Jabber MUC
+        self.register_plugin('xep_0060') # PubSub
+        self.register_plugin('xep_0199') # XMPP Ping
 
     # Handle the start event (connection to Jabber)
     def start(self, event):
         log.debug("Connection established, saying hello to the server")
-        # Announce our presence to the Jabber server so it knows we're connected
         self.send_presence()
-        # Get our friends list (also makes the server know we're really connected)
         self.get_roster()
-        # Join a channel
         self.plugin['xep_0045'].joinMUC(self.channel, self.nick, wait=False)
 
     def groupchatmessage(self, event):
@@ -64,17 +67,6 @@ class CardboardBot(sleekxmpp.ClientXMPP):
 if __name__ == '__main__':
     # Setup the command line arguments.
     optp = OptionParser()
-
-    # Output verbosity options.
-    #optp.add_option('-q', '--quiet', help='set logging to ERROR',
-    #                action='store_const', dest='loglevel',
-    #                const=logging.ERROR, default=logging.INFO)
-    #optp.add_option('-d', '--debug', help='set logging to DEBUG',
-    #                action='store_const', dest='loglevel',
-    #                const=logging.DEBUG, default=logging.INFO)
-    #optp.add_option('-v', '--verbose', help='set logging to COMM',
-    #                action='store_const', dest='loglevel',
-    #                const=5, default=logging.INFO)
 
     # JID and password options.
     optp.add_option("-j", "--jid", dest="jid",
@@ -126,13 +118,6 @@ if __name__ == '__main__':
 
     # Set up the bot and it's required XMPP things
     xmpp = CardboardBot(opts.jid, opts.password, opts.nick, opts.channel)
-    xmpp.register_plugin('xep_0030') # Service Discovery
-    xmpp.register_plugin('xep_0004') # Data Forms
-    xmpp.register_plugin('xep_0045') # Jabber MUC
-    xmpp.register_plugin('xep_0060') # PubSub
-    xmpp.register_plugin('xep_0199') # XMPP Ping
-
-    # xmpp.ssl_version = ssl.PROTOCOL_SSLv3
 
     # Connect!
     if xmpp.connect():

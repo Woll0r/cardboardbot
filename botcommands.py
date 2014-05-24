@@ -283,7 +283,7 @@ def handler(connection, msg):
         affiliation = get_user_affiliation(connection, sender)
         role = get_user_role(connection, sender)
         userjid = get_user_jid(connection, sender)
-        log.debug(sender + " " + userjid.user + " " + affiliation + " " + role)
+        log.debug("Nick: %s JID: %s Affiliation: %s Role: %s" %(sender, userjid.bare, affiliation, role))
     except Exception as e:
         pass
     
@@ -303,16 +303,24 @@ def handler(connection, msg):
     if msg["mucnick"] == connection.nick:
         return
 
+    # Administrative commands
+    if "!kick" in msg["body"].lower():
+        log.debug("Kick command detected")
+        to_kick = msg["body"].split("!kick ")[-1]
+        kick_user(connection, to_kick, msg["mucnick"], msg["from"].bare)
+        return
+
+    if "!identify" in msg["body"].lower():
+        log.debug("Identify command detected")
+        to_identify = msg["body"].split("!identify ")[-1]
+        connection.send_message(mto=msg["from"].bare,
+                                mbody="%s was identified as %s, with role %s and affiliation %s" %(to_identify, get_user_jid(to_identify), get_user_role(to_identify), get_user_affiliation(to_identify)),
+                                mtype="groupchat")
+        return
+        
     # Respond to mentions
     if connection.nick.lower() in msg["body"].lower():
         log.debug("Someone said my name!")
-
-        # Administrative commands
-        if "!kick" in msg["body"].lower():
-            log.debug("Kick command detected")
-            to_kick = msg["body"].split("!kick ")[-1]
-            kick_user(connection, to_kick, msg["mucnick"], msg["from"].bare)
-            return
         
         if "deminu" in msg["body"].lower():
             log.debug("Deminu detected")

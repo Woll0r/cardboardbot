@@ -313,8 +313,11 @@ def handler(connection, msg):
     if "!identify" in msg["body"].lower():
         log.debug("Identify command detected")
         to_identify = msg["body"].split("!identify ")[-1]
+        affiliation = get_user_affiliation(connection, to_identify)
+        role = get_user_role(connection, to_identify)
+        userjid = get_user_jid(connection, to_identify)
         connection.send_message(mto=msg["from"].bare,
-                                mbody="%s was identified as %s, with role %s and affiliation %s" %(to_identify, get_user_jid(to_identify), get_user_role(to_identify), get_user_affiliation(to_identify)),
+                                mbody="%s was identified as %s, with role %s and affiliation %s" %(to_identify, userjid.bare, role, affiliation),
                                 mtype="groupchat")
         return
         

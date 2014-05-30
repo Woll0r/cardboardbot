@@ -8,6 +8,7 @@ import logging
 import re
 import urllib
 import requests
+import urlparse
 
 # Needed for reading the memories file
 import yaml

@@ -13,7 +13,6 @@ try:
     results = cur.fetchall()
 
     for row in results:
-        id = row['id']
         url = row['url']
 
         hostname = urlparse.urlparse(url).hostname.split(".")
@@ -21,8 +20,8 @@ try:
 
         print hostname
 
-        cmd = 'UPDATE cardboardlinks SET domain=? WHERE id=?'
-        cur.execute(cmd, (hostname, id))
+        cmd = 'UPDATE cardboardlinks SET domain=? WHERE url=?'
+        cur.execute(cmd, (hostname, url))
 
 except sqlite3.Error, e:
     print "Error %s:" % e.args[0]

@@ -58,12 +58,12 @@ def insert_in_messages_table(timestamp, nick, jid, message):
             con.commit()
             con.close() 
             
-def insert_in_link_table(timestamp, sender, url, title):
+def insert_in_link_table(timestamp, sender, url, title, domain):
     try:
         con = sqlite3.connect('cardboardlog.db')
         cur = con.cursor()
-        cmd = "INSERT INTO cardboardlinks(timestamp, name, url, title) VALUES(?, ?, ?, ?);"
-        cur.execute(cmd, (timestamp, sender, url, title))
+        cmd = "INSERT INTO cardboardlinks(timestamp, name, url, title, domain) VALUES(?, ?, ?, ?, ?);"
+        cur.execute(cmd, (timestamp, sender, url, title, domain))
     except sqlite3.Error as e:
         if con:
             con.rollback()

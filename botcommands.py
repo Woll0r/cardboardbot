@@ -254,13 +254,17 @@ def handle_url(timestamp, sender, body):
         for match in matches:
             try:
                 res = requests.get(match, timeout=5)
+                
+                domain = urlparse.urlparse(match).hostname.split(".")
+                domain = ".".join(len(domain[-2]) < 4 and domain[-3:] or domain[-2:])
+                
                 if not 'html' in res.headers['content-type']:
                     log.debug("%s isn't HTML!" % match)
-                    databasecommands.insert_in_link_table(timestamp, sender, match, match)
+                    databasecommands.insert_in_link_table(timestamp, sender, match, match, domain)
                 else:
                     soup = BeautifulSoup(res.text)
                     title = soup.title.string.strip()
-                    databasecommands.insert_in_link_table(timestamp, sender, match, title)
+                    databasecommands.insert_in_link_table(timestamp, sender, match, title, domain)
                     results.append(title)
             except Exception as e:
                 log.debug("Error fetching url "+match+" : "+str(e))

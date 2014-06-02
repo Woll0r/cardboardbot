@@ -259,6 +259,11 @@ def handle_url(timestamp, sender, body):
                 domain = urlparse.urlparse(match).hostname.split(".")
                 domain = ".".join(len(domain[-2]) < 4 and domain[-3:] or domain[-2:])
                 
+                if domain == "youtu.be":
+                    domain = "youtube.com"
+                if domain == "deviantart.net":
+                    domain = "deviantart.com"
+                
                 if not 'html' in res.headers['content-type']:
                     log.debug("%s isn't HTML!" % match)
                     databasecommands.insert_in_link_table(timestamp, sender, match, match, domain)

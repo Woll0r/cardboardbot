@@ -60,7 +60,7 @@ def kick_user(connection, nick, sender, room):
     userjid = get_user_jid(connection, nick)
     log.debug("Attempting to kick %s" % nick)
     try:
-        kick = connection.plugin['xep_0045'].setRole(connection.channel, nick=nick, affiliation="none")
+        kick = connection.plugin['xep_0045'].setRole(connection.channel, nick=nick, role="none")
         if kick:
             log.debug("Kicking of %s successful" % nick)
         else:

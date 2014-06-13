@@ -39,7 +39,7 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         log.debug("Start up my brain...")
         botcommands.brain_start()
 
-        if !config.useipv6:
+        if not config.useipv6:
             self.use_ipv6 = False
         
         # Add event handling for Jabber events

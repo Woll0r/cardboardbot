@@ -36,12 +36,12 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         self.nick = nick
         self.channel = channel
 
-        # Disable IPv6 lookups for speed
-        self.use_ipv6 = False
-
         log.debug("Start up my brain...")
         botcommands.brain_start()
 
+        if !config.useipv6:
+            self.use_ipv6 = False
+        
         # Add event handling for Jabber events
         log.debug("Initialize event handlers...")
         self.add_event_handler("session_start", self.start)
@@ -115,7 +115,7 @@ if __name__ == '__main__':
         except NameError:
             log.critical("I require a channel!")
             exit(1)
-
+    
     # Set up the bot and it's required XMPP things
     xmpp = CardboardBot(opts.jid, opts.password, opts.nick, opts.channel)
 

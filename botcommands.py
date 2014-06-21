@@ -263,6 +263,8 @@ def handle_url(timestamp, sender, body):
                     domain = "youtube.com"
                 if domain == "deviantart.net":
                     domain = "deviantart.com"
+                if domain == "facdn.net":
+                    domain = "furaffinity.net"
                 
                 if not 'html' in res.headers['content-type']:
                     log.debug("%s isn't HTML!" % match)

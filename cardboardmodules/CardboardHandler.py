@@ -22,6 +22,7 @@ class CardboardHandler:
 
         timestamp = int(time.time())
         sender = msg["mucnick"]
+        userjid = cmd.get_user_jid(connection, sender)
         message = msg["body"]
         
         fullmessage = sender + ": " + message

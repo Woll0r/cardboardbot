@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import sys
+
 # Python versions before 3.0 do not use UTF-8 encoding
 # by default. To ensure that Unicode is handled properly
 # throughout SleekXMPP, we will set the default encoding

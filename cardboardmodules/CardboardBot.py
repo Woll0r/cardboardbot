@@ -28,23 +28,23 @@ log = logging.getLogger(__name__)
 
 class CardboardBot(sleekxmpp.ClientXMPP):
     # Class constructor
-    def __init__(self, config):
+    def __init__(self, jid, password, nick, channel, use_ipv6, brainfile, memoriesfile, aimlpath, databasefile):
         # Set parameters for SleekXMPP
         log.debug("Initiating CardboardBot by setting my own parameters...")
-        super(CardboardBot, self).__init__(config.jid, config.password)
+        super(CardboardBot, self).__init__(jid, password)
 
         # Configure my own parameters
-        self.jid = config.jid
-        self.password = config.password
-        self.nick = config.nick
-        self.channel = config.channel
+        self.jid = jid
+        self.password = password
+        self.nick = nick
+        self.channel = channel
         
-        if not config.useipv6:
+        if not use_ipv6:
             self.use_ipv6 = False
 
         # Setup handlers
-        self.ai = CardboardBrain(config.brainfile, config.memoriesfile, config.aimlpath)
-        self.db = CardboardDatabase(config.databasefile)
+        self.ai = CardboardBrain(brainfile, memoriesfile, aimlpath)
+        self.db = CardboardDatabase(databasefile)
         self.commands = CardboardCommands(self.db)
         self.links = CardboardLinks(self.db)
         self.handler = CardboardHandler(self.ai, self.cmd, self.db, self.links, self.nick)

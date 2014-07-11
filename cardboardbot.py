@@ -71,9 +71,9 @@ if __name__ == '__main__':
             exit(1)
     else:
         config.channel = opts.channel
-    
+        
     # Set up the bot and it's required XMPP things
-    xmpp = CardboardBot(config)
+    xmpp = CardboardBot(config.jid, config.password, config.nick, config.channel, config.use_ipv6, config.brainfile, config.memoriesfile, config.aimlpath, config.databasefile)
 
     # Connect!
     if xmpp.connect():

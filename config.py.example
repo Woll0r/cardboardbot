@@ -6,4 +6,8 @@ useipv6 = False
 nick = "MyBotName"
 channel = "chatroomgoeshere"
 
-admins = ["admin@example.com", "techguy@example.com"]
+databasefile = "cardboardlog.db"
+
+brainfile = "cardboardbrain.brn"
+memoriesfile = "cardboardmemories.yml"
+aimlpath = "aiml/std-startup.xml"

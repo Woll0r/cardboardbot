@@ -69,13 +69,13 @@ class CardboardCommands:
             return "/me purrs :sweetiepleased:"
         if [i for i in niceActions if i in body.lower()]:
             log.debug("%s is doing nice things to me!" % nick)
-            return goodtuch(nick)
+            return self.goodtuch(nick)
         if [i for i in sexActions if i in body.lower()]:
             log.debug("%s is doing sex things to me!" % nick)
-            return sextuch(nick)
+            return self.sextuch(nick)
         else:
             log.debug("%s is doing bad things to me!" % nick)
-            return badtuch(nick)
+            return self.badtuch(nick)
     
     def get_user_affiliation(self, connection, nick):
         """Get a user's affiliation with the room"""

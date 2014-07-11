@@ -47,7 +47,7 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         self.db = CardboardDatabase(databasefile)
         self.commands = CardboardCommands(self.db)
         self.links = CardboardLinks(self.db)
-        self.handler = CardboardHandler(self.ai, self.cmd, self.db, self.links, self.nick)
+        self.handler = CardboardHandler(self.ai, self.commands, self.db, self.links, self.nick)
               
         # Add event handling for Jabber events
         log.debug("Initialize event handlers...")

@@ -20,12 +20,23 @@ if __name__ == '__main__':
     optp.add_option("-j", "--jid", dest="jid",
                     help="JID to use")
     optp.add_option("-p", "--password", dest="password",
-                    help="password to use")
+                    help="Password to use")
+    optp.add_option("--use-ipv6", dest="use_ipv6", action="store_true",
+                    help="Enable IPv6")
+    optp.add_option("--no-use-ipv6", "--no-ipv6", dest="use_ipv6", action="store_false",
+                    help="Disable IPv6")
     optp.add_option("-n", "--nick", dest="nick",
                     help="Nick to use in channels.")
     optp.add_option("-c", "--channel", dest="channel",
                     help="Channel to work in.")
-
+    optp.add_option("-d", "--databasefile", dest="databasefile",
+                    help="Databasefile to use")
+    optp.add_option("-m", "--memoriesfile", dest="memoriesfile",
+                    help="Memoriesfile to use")
+    optp.add_option("-b", "--brainfile", dest="brainfile",
+                    help="Brainfile to use")
+    optp.add_option("-a", "--aimlpath", dest="aimlpath",
+                    help="Aimlpath to use")
     opts, args = optp.parse_args()
 
     # Setup logging.
@@ -45,35 +56,57 @@ if __name__ == '__main__':
         except NameError:
             log.critical("I require a JID!")
             exit(1)
-    else:
-        config.jid = opts.jid
     if opts.password is None:
         try:
             opts.password = config.password
         except NameError:
             log.critical("I require a password!")
             exit(1)
-    else:
-        config.password = opts.password
+    if opts.use_ipv6 is None:
+        try:
+            opts.use_ipv6 = config.use_ipv6
+        except NameError:
+            log.warning("use_ipv6 not specified! Disabling IPv6 support...")
+            opts.use_ipv6 = false
     if opts.nick is None:
         try:
             opts.nick = config.nick
         except NameError:
             log.critical("I require a nick!")
             exit(1)
-    else:
-        config.nick = opts.nick
     if opts.channel is None:
         try:
             opts.channel = config.channel
         except NameError:
             log.critical("I require a channel!")
             exit(1)
-    else:
-        config.channel = opts.channel
+    if opts.databasefile is None:
+        try:
+            opts.databasefile = config.databasefile
+        except NameError:
+            log.critical("I require a databasefile!")
+            exit(1)
+    if opts.brainfile is None:
+        try:
+            opts.brainfile = config.brainfile
+        except NameError:
+            log.warning("brainfile not defined! Using default value of cardboardbrain.brn...")
+            opts.brainfile = "cardboardbrain.brn"
+    if opts.memoriesfile is None:
+        try:
+            opts.memoriesfile = config.memoriesfile
+        except NameError:
+            log.critical("I require a memoriesfile!")
+            exit(1)
+    if opts.aimlpath is None:
+        try:
+            opts.aimlpath = config.aimlpath
+        except NameError:
+            log.warning("aimlpath not defined! Using default value...")
+            opts.brainfile = "aiml/std-startup.xml"
         
     # Set up the bot and it's required XMPP things
-    xmpp = CardboardBot(config.jid, config.password, config.nick, config.channel, config.use_ipv6, config.brainfile, config.memoriesfile, config.aimlpath, config.databasefile)
+    xmpp = CardboardBot(opts.jid, opts.password, opts.nick, opts.channel, opts.use_ipv6, opts.brainfile, opts.memoriesfile, opts.aimlpath, opts.databasefile)
 
     # Connect!
     if xmpp.connect():

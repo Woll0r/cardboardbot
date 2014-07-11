@@ -1,7 +1,7 @@
 jid = "someJid@example.com"
 password = "foo-bar"
 
-useipv6 = False
+use_ipv6 = False
 
 nick = "MyBotName"
 channel = "chatroomgoeshere"

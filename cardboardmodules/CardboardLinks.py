@@ -37,6 +37,7 @@ class CardboardLinks:
             else:
                 soup = BeautifulSoup(res.text)
                 title = soup.title.string.strip()
+                log.debug(title)
                 self.db.insert_in_link_table(timestamp, sender, match, title, domain)
                 return title
         except Exception as e:
@@ -77,7 +78,7 @@ class CardboardLinks:
             from bs4 import BeautifulSoup
             for match in matches:
                 if 'oembed' in match:
-                    title = self.get_oembed_title(match, timestamp, sender)
+                    title = self.get_oembed_page_title(match, timestamp, sender)
                 else:
                     title = self.get_page_title(match, timestamp, sender)
 

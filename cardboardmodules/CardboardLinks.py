@@ -16,6 +16,7 @@ class CardboardLinks:
         self.db = db
 
     def get_page_title(self, match, timestamp, sender):
+        from bs4 import BeautifulSoup
         try:
             headers = { 'user-agent': 'cardboardbot' }
             res = requests.get(match, timeout=5, headers=headers)
@@ -74,7 +75,6 @@ class CardboardLinks:
         if matches:
             log.debug("I think I see an URL! " + " / ".join(matches))
             results = []
-            from bs4 import BeautifulSoup
             for match in matches:
                 if 'oembed' in match:
                     title = self.get_oembed_page_title(match, timestamp, sender)

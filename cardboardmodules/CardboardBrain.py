@@ -13,10 +13,11 @@ import os.path
 log = logging.getLogger(__name__)
 
 class CardboardBrain:
-    def __init__(self, brainfile, memoriesfile, aimlpath):
+    def __init__(self, brainfile, memoriesfile, aimlpath, nick):
         # Initialize Alice
         self.brain = aiml.Kernel()
         self.brain_start(brainfile, memoriesfile, aimlpath)
+        self.nick = nick
 
     def brain_start(self, brainfile, memoriesfile, aimlpath):
         """Creates the brain file if needed and then loads it.

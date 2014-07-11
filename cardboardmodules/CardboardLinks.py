@@ -68,18 +68,18 @@ class CardboardLinks:
         urlregex = re.compile(r"((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w_-]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)")
         matches = urlregex.findall(body)
         matches = map(lambda x: x[0], matches)
-        matches = map(imgur_filter, matches)
-        matches = map(e621_filter, matches)
-        matches = map(deviantart_filter, matches)
+        matches = map(self.imgur_filter, matches)
+        matches = map(self.e621_filter, matches)
+        matches = map(self.deviantart_filter, matches)
         if matches:
             log.debug("I think I see an URL! " + " / ".join(matches))
             results = []
             from bs4 import BeautifulSoup
             for match in matches:
                 if 'oembed' in match:
-                    title = get_oembed_title(match, timestamp, sender)
+                    title = self.get_oembed_title(match, timestamp, sender)
                 else:
-                    title = get_page_title(match, timestamp, sender)
+                    title = self.get_page_title(match, timestamp, sender)
 
                 if title:
                     results.append(title)

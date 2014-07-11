@@ -81,7 +81,7 @@ class CardboardLinks:
                 else:
                     title = get_page_title(match, timestamp, sender)
 
-                if title not None:
+                if title:
                     results.append(title)
             
             if not len(results):

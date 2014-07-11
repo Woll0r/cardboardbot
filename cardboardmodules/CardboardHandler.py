@@ -17,7 +17,7 @@ class CardboardHandler:
         self.links = links
         self.nick = nickname
         
-    def handler(connection, msg):
+    def handler(self, connection, msg):
         """Handle incoming messages"""
 
         timestamp = int(time.time())

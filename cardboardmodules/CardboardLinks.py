@@ -34,12 +34,11 @@ class CardboardLinks:
                 log.debug("%s isn't HTML!" % match)
                 self.db.insert_in_link_table(timestamp, sender, match, match, domain)
                 return None
-            else:
-                soup = BeautifulSoup(res.text)
-                title = soup.title.string.strip()
-                log.debug(title)
-                self.db.insert_in_link_table(timestamp, sender, match, title, domain)
-                return title
+            soup = BeautifulSoup(res.text)
+            title = soup.title.string.strip()
+            log.debug(title)
+            self.db.insert_in_link_table(timestamp, sender, match, title, domain)
+            return title
         except Exception as e:
             log.debug("Error fetching url "+match+" : "+str(e))
             pass
@@ -50,7 +49,7 @@ class CardboardLinks:
             headers = { 'user-agent': 'cardboardbot' }
             res = requests.get(url, timeout=5, headers=headers)
         
-            domain = urlparse.urlparse(match).hostname.split(".")
+            domain = urlparse.urlparse(url).hostname.split(".")
             domain = ".".join(len(domain[-2]) < 4 and domain[-3:] or domain[-2:])
         
             if domain == "deviantart.net":

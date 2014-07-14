@@ -40,6 +40,11 @@ class CardboardHandler:
         if sender == self.nick:
             return
 
+        # Handle links in messages
+        urls = self.links.handle_url(timestamp, userjid.bare, message)
+        if urls:
+            connection.send_message(mto=msg["from"].bare, mbody=urls, mtype="groupchat")
+        
         # Administrative commands
         if "!kick" in message.lower():
             log.debug("Kick command detected")
@@ -92,10 +97,5 @@ class CardboardHandler:
             log.debug("I don't know what to say, delegating to Alice")
             connection.send_message(mto=msg["from"].bare, mbody=self.ai.alicemessage(sender, message), mtype="groupchat")
             return
-
-        # Handle links in messages
-        urls = self.links.handle_url(timestamp, userjid.bare, message)
-        if urls:
-            connection.send_message(mto=msg["from"].bare, mbody=urls, mtype="groupchat")
         
         return

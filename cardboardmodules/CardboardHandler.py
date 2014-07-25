@@ -43,7 +43,9 @@ class CardboardHandler:
         # Handle links in messages
         urls = self.links.handle_url(timestamp, userjid.bare, message)
         if urls:
-            connection.send_message(mto=msg["from"].bare, mbody=urls, mtype="groupchat")
+            connection.send_message(mto=msg["from"].bare,
+                    mbody=urls,
+                    mtype="groupchat")
         
         # Administrative commands
         if "!kick" in message.lower():
@@ -59,43 +61,60 @@ class CardboardHandler:
             role = self.cmd.get_user_role(connection, to_identify)
             userjid = self.cmd.get_user_jid(connection, to_identify)
             connection.send_message(mto=msg["from"].bare,
-                                mbody="%s was identified as %s, with role %s and affiliation %s" %(to_identify, userjid.bare, role, affiliation),
-                                mtype="groupchat")
+                    mbody="%s was identified as %s, with role %s and affiliation %s" %(to_identify, userjid.bare, role, affiliation),
+                    mtype="groupchat")
             return
         
         # Respond to mentions
         if connection.nick.lower() in message.lower():
             log.debug("Someone said my name!")
         
+            # ping!
+            if "ping" in message.lower():
+                log.debug("Someone wants to send a ping!")
+                ping = message.replace(self.nick + ": ", "", 1)
+                connection.send_message(mto="sweetiebutt@friendshipismagicsquad.com",
+                    mbody=ping,
+                    mtype="chat")
+                return
+            
             # C/D mode
             if message.lower().endswith("c/d") or message.lower().endswith("c/d?"):
                 log.debug("Confirm/deny detected")
                 connection.send_message(mto=msg["from"].bare,
-                                    mbody="%s: %s" %(sender, self.cmd.ceedee()),
-                                    mtype="groupchat")
+                    mbody="%s: %s" %(sender, self.cmd.ceedee()),
+                    mtype="groupchat")
                 return
         
             # Someone does things to me!
             if message.lower().startswith("/me"):
                 log.debug("I am being touched by %s!" % sender)
-                connection.send_message(mto=msg["from"].bare, mbody=self.cmd.tuch(sender, message), mtype="groupchat")
+                connection.send_message(mto=msg["from"].bare,
+                        mbody=self.cmd.tuch(sender, message),
+                        mtype="groupchat")
                 return
         
             # Tumblr argueing
             if "argue" in message.lower():
                 log.debug("Someone wants me to argue!")
-                connection.send_message(mto=msg["from"].bare, mbody=self.cmd.argue(), mtype="groupchat")
+                connection.send_message(mto=msg["from"].bare,
+                        mbody=self.cmd.argue(),
+                        mtype="groupchat")
                 return
 
             # Tumblr rant
             if "rant" in message.lower():
                 log.debug("Someone wants me to rant!")
-                connection.send_message(mto=msg["from"].bare, mbody=self.cmd.rant(), mtype="groupchat")
+                connection.send_message(mto=msg["from"].bare,
+                        mbody=self.cmd.rant(),
+                        mtype="groupchat")
                 return
 
             # Delegate response to Alice
             log.debug("I don't know what to say, delegating to Alice")
-            connection.send_message(mto=msg["from"].bare, mbody=self.ai.alicemessage(sender, message), mtype="groupchat")
+            connection.send_message(mto=msg["from"].bare,
+                    mbody=self.ai.alicemessage(sender, message),
+                    mtype="groupchat")
             return
         
         return

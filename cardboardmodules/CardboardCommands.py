@@ -12,6 +12,18 @@ class CardboardCommands:
 
     def __init__(self, db):
         self.db = db
+        
+    def get_all_nicks_in_room(self, connection):
+        nicklist = connection.plugin['xep_0045'].getRoster(connection.channel)
+        return nicklist
+    
+    def get_all_jids_in_room(self, connection):
+        nicklist = self.get_all_nicks(connection)
+        jidlist = []
+        for nick in nicklist:
+            jid = self.get_user_jid(connection, nick)
+            jidlist.append(jid.bare)
+        return jidlist
 
     def goodtuch(self, nick):
         """Someone touches the bot in a nice way"""

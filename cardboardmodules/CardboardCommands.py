@@ -193,7 +193,8 @@ class CardboardCommands:
     def roll_dice(self, dice, sides):
         try:
             return [randint(1, sides) for i in range(dice)]
-        except:
+        except Exception as e:
+            log.warning("Exception in diceroll: %s" % str(e))
             return []
             
     def roll(self, message):
@@ -212,7 +213,7 @@ class CardboardCommands:
         if dice < 1:
             return "I can't roll less than one dice."
         diceroll = self.roll_dice(dice, sides)
-        if len(diceroll) < 1:
+        if not diceroll:
             return "Oops, I accidentally dropped my dice"
         reply = ', '.join(map(str, rolls))
         if sides == 6:

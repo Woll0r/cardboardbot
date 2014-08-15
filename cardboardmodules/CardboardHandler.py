@@ -110,10 +110,15 @@ class CardboardHandler:
                         mtype="groupchat")
                 return
 
+            # Diceroll
+            if "roll" in message.lower():
+                log.debug("Someone asked for a diceroll!")
+                
             # Delegate response to Alice
             log.debug("I don't know what to say, delegating to Alice")
+            dice = message.split("roll ")[-1]
             connection.send_message(mto=msg["from"].bare,
-                    mbody=self.ai.alicemessage(sender, message),
+                    mbody=self.cmd.roll(dice),
                     mtype="groupchat")
             return
         

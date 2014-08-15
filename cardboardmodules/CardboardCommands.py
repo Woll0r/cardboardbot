@@ -170,14 +170,58 @@ class CardboardCommands:
     
     def argue(self):
         """Tumblr-argueing thanks to Nyctef and his TumblrAAS"""
-        res = requests.get('http://tumblraas.azurewebsites.net/', timeout=5)
-        return res.text.strip()
+        try:
+            res = requests.get('http://tumblraas.azurewebsites.net/', timeout=5)
+            return res.text.strip()
+        except RequestException as e:
+            log.warning("Exception while arguing: %s" % str(e))
+            return "Huh, what? I zoned out for a moment there."
     
     def rant(self):
         """Tumblr-rants thanks to Nyctef and his TumblrAAS"""
-        res = requests.get('http://tumblraas.azurewebsites.net/rant', timeout=5)
-        return res.text.strip()
+        try:
+            res = requests.get('http://tumblraas.azurewebsites.net/rant', timeout=5)
+            return res.text.strip()
+        except RequestException as e:
+            log.warning("Exception while arguing: %s" % str(e))
+            return "Huh, what? I zoned out for a moment there."
 
     def ceedee(self):
         """Confirm or deny"""
         return random.choice(['c', 'd'])
+    
+    def roll_dice(self, dice, sides):
+        try:
+            return [randint(1, sides) for i in range(dice)]
+        except:
+            return []
+            
+    def roll(self, message):
+        try:
+            dice, sides = list(map(int, message.split('d', 1)))
+            log.debug("Diceroll requested with %s dice and %s sides" % (dice, sides))
+        except:
+            log.warning("Bad dice!")
+            return "Sorry, can't parce your input"
+        if dice > 50:
+            return "I can't roll that many dice."
+        if sides > 200:
+            return "I don't have any dice with that many sides."
+        if sides < 2:
+            return "How can you roll a dice without sides?"
+        if dice < 1:
+            return "I can't roll less than one dice."
+        diceroll = self.roll_dice(dice, sides)
+        if len(diceroll) < 1:
+            return "Oops, I accidentally dropped my dice"
+        reply = ', '.join(map(str, rolls))
+        if sides == 6:
+            # assuming Shadowrun roll
+            success = sum(i > 5 for i in rolls)
+            reply = reply + " (%s success)" % success
+            if sum(i==1 for i in rolls) > dice/2:
+                if not success:
+                    reply = reply + " CRITICAL GLITCH"
+                else:
+                    reply = reply + " glitched"
+        return reply

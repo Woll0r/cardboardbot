@@ -215,12 +215,12 @@ class CardboardCommands:
         diceroll = self.roll_dice(dice, sides)
         if not diceroll:
             return "Oops, I accidentally dropped my dice"
-        reply = ', '.join(map(str, rolls))
+        reply = ', '.join(map(str, diceroll))
         if sides == 6:
             # assuming Shadowrun roll
-            success = sum(i > 5 for i in rolls)
+            success = sum(i > 5 for i in diceroll)
             reply = reply + " (%s success)" % success
-            if sum(i==1 for i in rolls) > dice/2:
+            if sum(i==1 for i in diceroll) > dice/2:
                 if not success:
                     reply = reply + " CRITICAL GLITCH"
                 else:

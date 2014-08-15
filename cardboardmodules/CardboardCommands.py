@@ -192,7 +192,7 @@ class CardboardCommands:
     
     def roll_dice(self, dice, sides):
         try:
-            return [randint(1, sides) for i in range(dice)]
+            return [random.randint(1, sides) for i in range(dice)]
         except Exception as e:
             log.warning("Exception in diceroll: %s" % str(e))
             return []

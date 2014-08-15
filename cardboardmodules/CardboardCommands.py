@@ -203,7 +203,7 @@ class CardboardCommands:
             log.debug("Diceroll requested with %s dice and %s sides" % (dice, sides))
         except:
             log.warning("Bad dice!")
-            return "Sorry, can't parce your input"
+            return "Sorry, can't parse your input"
         if dice > 50:
             return "I can't roll that many dice."
         if sides > 200:

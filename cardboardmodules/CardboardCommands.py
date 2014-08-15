@@ -218,7 +218,7 @@ class CardboardCommands:
         reply = ', '.join(map(str, diceroll))
         if sides == 6:
             # assuming Shadowrun roll
-            success = sum(i > 5 for i in diceroll)
+            success = sum(i >= 5 for i in diceroll)
             reply = reply + " (%s success)" % success
             if sum(i==1 for i in diceroll) > dice/2:
                 if not success:

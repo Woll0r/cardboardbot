@@ -198,6 +198,8 @@ class CardboardCommands:
             return []
             
     def roll(self, message):
+        if message.lower() == "out":
+            return "/me transforms and rides off :rdsanic:"
         try:
             dice, sides = list(map(int, message.split('d', 1)))
             log.debug("Diceroll requested with %s dice and %s sides" % (dice, sides))

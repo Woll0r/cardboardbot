@@ -106,8 +106,8 @@ class CardboardCommands:
 
     def kick_user(self, connection, nick, sender, room):
         """Kick a user from the room"""
-        senderrole = get_user_role(connection, sender)
-        receiverrole = get_user_role(connection, nick)
+        senderrole = self.get_user_role(connection, sender)
+        receiverrole = self.get_user_role(connection, nick)
         if receiverrole is None:
             log.debug("Kick requested by %s failed because target %s is not in the room" %(sender, nick))
             connection.send_message(mto=room, mbody="I'm sorry, %s, I can't find %s in the room. :sweetiestare:" % (sender, nick))
@@ -120,7 +120,7 @@ class CardboardCommands:
             log.debug("Kick requested by %s failed because target %s is a moderator" %(sender, nick))
             connection.send_message(mto=room, mbody="I'm sorry, %s, I can't let you do that. :sweetiestare:" % sender, mtype="groupchat")
             return
-        userjid = get_user_jid(connection, nick)
+        userjid = self.get_user_jid(connection, nick)
         log.debug("Attempting to kick %s" % nick)
         try:
             kick = connection.plugin['xep_0045'].setRole(connection.channel, nick=nick, role="none")

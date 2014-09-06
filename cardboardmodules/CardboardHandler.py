@@ -20,7 +20,7 @@ class CardboardHandler:
     def handler(self, connection, msg):
         """Handle incoming messages"""
 
-        messager = CardboardMessage(connection, msg["from"].bare)
+        messager = CardboardMessage(connection=connection, default_destination=msg["from"].bare)
 
         timestamp = int(time.time())
         sender = msg["mucnick"]

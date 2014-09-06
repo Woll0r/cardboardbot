@@ -20,12 +20,15 @@ class Message:
 
 class CardboardMessage:
     def __init__(self, connection, default_destination):
+        log.debug("CardboardMessage init: %s, %s" % (connection, default_destination))
         self.connection = connection
         self.default_destination = default_destination
 
     def create_message(self, plaintext, html=None, destination=None):
-        if destination is None: destination = self.default_destination
-        message = Message(plaintext, html, destination)
+        log.debug("Creating message: %s, %s, %s" % (plaintext, html, destination)
+        if destination is None:
+            destination = self.default_destination
+        message = Message(plain=plaintext, html=html, destination=destination)
         return message
 
     def send_message(self, message=None, type="groupchat"):

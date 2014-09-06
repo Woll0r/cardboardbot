@@ -126,6 +126,7 @@ class CardboardHandler:
                 plain = '{} [{}]'.format(title, url)
                 message = messager.create_message(plaintext=plain, html=html)
                 messager.send_message(message)
+                return
 
             # clop
             if "clop" in messagebody.lower():
@@ -135,6 +136,7 @@ class CardboardHandler:
                 plain = '{} [{}]'.format(title, url)
                 message = messager.create_message(plaintext=plain, html=html)
                 messager.send_message(message)
+                return
 
             # Delegate response to Alice
             log.debug("I don't know what to say, delegating to Alice")

@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from html import escape as html_escape
+import cgi
 
 log = logging.getLogger(__name__)
 
 
 def to_html(plain):
-    html = html_escape(plain).replace('\n', '<br />')
+    html = cgi.escape(plain).replace('\n', '<br />')
 
 
 class Message:

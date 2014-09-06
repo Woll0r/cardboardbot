@@ -131,7 +131,7 @@ class CardboardHandler:
             # clop
             if "clop" in messagebody.lower():
                 log.debug("Someone asked for clop!")
-                url, title = self.lookup.pony(sender, timestamp)
+                url, title = self.lookup.clop(sender, timestamp)
                 html = ':nws: <a href="{}">{}</a> :nws:'.format(url, title)
                 plain = '{} [{}]'.format(title, url)
                 message = messager.create_message(plaintext=plain, html=html)

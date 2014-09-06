@@ -25,7 +25,7 @@ class CardboardMessage:
         self.default_destination = default_destination
 
     def create_message(self, plaintext, html=None, destination=None):
-        log.debug("Creating message: %s, %s, %s" % (plaintext, html, destination)
+        log.debug("Creating message: %s, %s, %s" % (plaintext, html, destination))
         if destination is None:
             destination = self.default_destination
         message = Message(plain=plaintext, html=html, destination=destination)

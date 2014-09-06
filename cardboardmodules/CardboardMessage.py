@@ -27,10 +27,10 @@ class CardboardMessage:
         message = Message(plaintext, html, destination or self.default_destination)
         return message
 
-    def send_message(self, message=None, type='groupchat'):
+    def send_message(self, message=None, type="groupchat"):
+        log.debug("Sending message: %s" % message.plain)
+        log.debug("Destination: %s, type: %s" % (message.destination, type))
         self.connection.send_message(mto=message.destination,
                                      mbody=message.plain,
                                      mhtml=message.html,
                                      mtype=type)
-
-

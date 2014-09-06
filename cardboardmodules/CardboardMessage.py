@@ -24,7 +24,8 @@ class CardboardMessage:
         self.default_destination = default_destination
 
     def create_message(self, plaintext, html=None, destination=None):
-        message = Message(plaintext, html, destination or self.default_destination)
+        if destination is None: destination = self.default_destination
+        message = Message(plaintext, html, destination)
         return message
 
     def send_message(self, message=None, type="groupchat"):

@@ -41,7 +41,7 @@ class CardboardLookup:
     def retrieve_specific_type_from_dict(self, data, kind):
         result = []
         for child in data['data']['children']:
-            if child['kind'] == kind:
+            if child['kind'] == kind and not child['is_self']:
                 result.append(child)
 
         return result

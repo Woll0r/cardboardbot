@@ -15,16 +15,19 @@ else:
 
 import logging
 
-import sleekxmpp                   # Jabber library
-import ssl                         # SSL connections to Jabbers!
+import sleekxmpp  # Jabber library
+import ssl  # SSL connections to Jabbers!
 
 from CardboardBrain import CardboardBrain
 from CardboardCommands import CardboardCommands
 from CardboardDatabase import CardboardDatabase
 from CardboardHandler import CardboardHandler
 from CardboardLinks import CardboardLinks
+from CardboardLinks import CardboardLookup
+from CardboardMessage import CardboardMessage
 
 log = logging.getLogger(__name__)
+
 
 class CardboardBot(sleekxmpp.ClientXMPP):
     # Class constructor
@@ -38,7 +41,7 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         self.password = password
         self.nick = nick
         self.channel = channel
-        
+
         if not use_ipv6:
             self.use_ipv6 = False
 
@@ -47,18 +50,20 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         self.db = CardboardDatabase(databasefile)
         self.commands = CardboardCommands(self.db)
         self.links = CardboardLinks(self.db)
-        self.handler = CardboardHandler(self.ai, self.commands, self.db, self.links, self.nick)
-              
+        self.lookup = CardboardLookup(self.db, self.links)
+        self.handler = CardboardHandler(self.ai, self.commands, self.db, self.links, self.nick, self.channel,
+                                        self.lookup)
+
         # Add event handling for Jabber events
         log.debug("Initialize event handlers...")
         self.add_event_handler("session_start", self.start)
         self.add_event_handler("groupchat_message", self.groupchatmessage)
-        
-        self.register_plugin('xep_0030') # Service Discovery
-        self.register_plugin('xep_0004') # Data Forms
-        self.register_plugin('xep_0045') # Jabber MUC
-        self.register_plugin('xep_0060') # PubSub
-        self.register_plugin('xep_0199') # XMPP Ping
+
+        self.register_plugin('xep_0030')  # Service Discovery
+        self.register_plugin('xep_0004')  # Data Forms
+        self.register_plugin('xep_0045')  # Jabber MUC
+        self.register_plugin('xep_0060')  # PubSub
+        self.register_plugin('xep_0199')  # XMPP Ping
 
     # Handle the start event (connection to Jabber)
     def start(self, event):

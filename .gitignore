@@ -11,3 +11,6 @@ standard.brn
 # ignore logs
 cardboardbot.log
 cardboardlog.db
+
+# ignore IDE
+.idea/

@@ -8,8 +8,8 @@ import sqlite3
 
 log = logging.getLogger(__name__)
 
-class CardboardDatabase:
 
+class CardboardDatabase:
     def __init__(self, databasefile='cardboardlog.db'):
         self.path = databasefile
 
@@ -59,8 +59,8 @@ class CardboardDatabase:
         finally:
             if con:
                 con.commit()
-                con.close() 
-            
+                con.close()
+
     def insert_in_link_table(self, timestamp, sender, url, title, domain):
         try:
             con = sqlite3.connect(self.path)

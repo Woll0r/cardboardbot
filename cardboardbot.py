@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys                         # Systems stuff
-import logging                     # Logging
+import sys  # Systems stuff
+import logging  # Logging
 from optparse import OptionParser  # Parse commandline options
 
 log = logging.getLogger(__name__)
-        
+
 if __name__ == '__main__':
     import config
-    
+
     # Load the modules
     from cardboardmodules import CardboardBot
-    
+
     # Setup the command line arguments.
     optp = OptionParser()
 
@@ -104,9 +104,10 @@ if __name__ == '__main__':
         except NameError:
             log.warning("aimlpath not defined! Using default value...")
             opts.brainfile = "aiml/std-startup.xml"
-        
+
     # Set up the bot and it's required XMPP things
-    xmpp = CardboardBot.CardboardBot(opts.jid, opts.password, opts.nick, opts.channel, opts.use_ipv6, opts.brainfile, opts.memoriesfile, opts.aimlpath, opts.databasefile)
+    xmpp = CardboardBot.CardboardBot(opts.jid, opts.password, opts.nick, opts.channel, opts.use_ipv6, opts.brainfile,
+                                     opts.memoriesfile, opts.aimlpath, opts.databasefile)
 
     # Connect!
     if xmpp.connect():

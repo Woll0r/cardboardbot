@@ -23,7 +23,7 @@ from CardboardCommands import CardboardCommands
 from CardboardDatabase import CardboardDatabase
 from CardboardHandler import CardboardHandler
 from CardboardLinks import CardboardLinks
-from CardboardLinks import CardboardLookup
+from CardboardLookup import CardboardLookup
 from CardboardMessage import CardboardMessage
 
 log = logging.getLogger(__name__)

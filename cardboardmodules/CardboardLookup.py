@@ -27,7 +27,7 @@ class CardboardLookup:
             log.warning("Failed to fetch: %s" % str(e))
             return None
 
-    def retrieve_specific_type(self, data, type):
+    def retrieve_specific_type(self, data, kind):
         if type(data) is dict:
             return self.retrieve_specific_type_from_dict(data, kind)
 

@@ -133,7 +133,7 @@ class CardboardHandler:
                 log.debug("Someone asked for clop!")
                 url, title = self.lookup.clop(sender, timestamp)
                 html = ':nws: <a href="{}">{}</a> :nws:'.format(url, title)
-                plain = '{} [{}]'.format(title, url)
+                plain = ':nws: {} [{}] :nws:'.format(title, url)
                 message = messager.create_message(plaintext=plain, html=html)
                 messager.send_message(message)
                 return

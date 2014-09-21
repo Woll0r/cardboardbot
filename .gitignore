@@ -14,3 +14,6 @@ cardboardlog.db
 
 # ignore IDE
 .idea/
+
+# ignore virtualenv
+.env/

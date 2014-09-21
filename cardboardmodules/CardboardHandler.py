@@ -64,7 +64,8 @@ class CardboardHandler:
             role = self.cmd.get_user_role(connection, to_identify)
             userjid = self.cmd.get_user_jid(connection, to_identify)
 
-            message = messager.create_message("%s was identified as %s, with role %s and affiliation %s" % (to_identify, userjid.bare, role, affiliation))
+            message = messager.create_message("%s was identified as %s, with role %s and affiliation %s" % (
+            to_identify, userjid.bare, role, affiliation))
             messager.send_message(message)
             return
 
@@ -121,9 +122,7 @@ class CardboardHandler:
             # Pony
             if "pony" in messagebody.lower():
                 log.debug("Someone asked for ponies!")
-                url, title = self.lookup.pony(sender, timestamp)
-                html = '<a href="{}">{}</a>'.format(url, title)
-                plain = '{} [{}]'.format(title, url)
+                plain, html = self.lookup.pony(sender, timestamp)
                 message = messager.create_message(plaintext=plain, html=html)
                 messager.send_message(message)
                 return
@@ -131,9 +130,15 @@ class CardboardHandler:
             # clop
             if "clop" in messagebody.lower():
                 log.debug("Someone asked for clop!")
-                url, title = self.lookup.clop(sender, timestamp)
-                html = ':nws: <a href="{}">{}</a> :nws:'.format(url, title)
-                plain = ':nws: {} [{}] :nws:'.format(title, url)
+                plain, html = self.lookup.clop(sender, timestamp)
+                message = messager.create_message(plaintext=plain, html=html)
+                messager.send_message(message)
+                return
+
+            # subreddit
+            if "redditlookup" in messagebody.lower():
+                subreddit = messagebody.lower().split("redditlookup ")[-1]
+                plain, html = self.lookup.lookup(subreddit, sender, timestamp)
                 message = messager.create_message(plaintext=plain, html=html)
                 messager.send_message(message)
                 return

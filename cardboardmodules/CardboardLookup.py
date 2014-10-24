@@ -81,14 +81,17 @@ class CardboardLookup:
         return plain, html
 
     def lookup(self, subreddit, sender, timestamp):
+        """Get a random link from the specified subreddit"""
         link = "http://reddit.com/r/" + subreddit + ".json?count=100"
         url, title, nsfw = self.get_link(link, sender, timestamp)
         return self.build_message(url, title, nsfw)
 
     def clop(self, sender, timestamp):
+        """Get a random link from /r/clopclop"""
         url, title, nsfw = self.get_link("http://reddit.com/r/clopclop.json?count=100", sender, timestamp)
         return self.build_message(url, title, nsfw)
 
     def pony(self, sender, timestamp):
+        """Get a random link from /r/mylittlepony"""
         url, title, nsfw = self.get_link("http://reddit.com/r/mylittlepony.json?count=100", sender, timestamp)
         return self.build_message(url, title, nsfw)

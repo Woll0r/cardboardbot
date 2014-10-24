@@ -136,7 +136,7 @@ class CardboardCommands:
         try:
             res = requests.get('http://tumblraas.azurewebsites.net/', timeout=5)
             return res.text.strip()
-        except RequestException as e:
+        except requests.RequestException as e:
             log.warning("Exception while arguing: %s" % str(e))
             return "Huh, what? I zoned out for a moment there."
 
@@ -145,7 +145,7 @@ class CardboardCommands:
         try:
             res = requests.get('http://tumblraas.azurewebsites.net/rant', timeout=5)
             return res.text.strip()
-        except RequestException as e:
+        except requests.RequestException as e:
             log.warning("Exception while arguing: %s" % str(e))
             return "Huh, what? I zoned out for a moment there."
 
@@ -161,6 +161,7 @@ class CardboardCommands:
             return []
 
     def roll(self, message):
+        """ Rolls dice, up to 63 dice with 100 sides"""
         if message.lower() == "out":
             return "/me transforms and rides off :rdsanic:"
         try:
@@ -169,7 +170,7 @@ class CardboardCommands:
         except:
             log.warning("Bad dice!")
             return "Sorry, can't parse your input"
-        if dice > 50:
+        if dice > 63:
             return "I can't roll that many dice."
         if sides > 200:
             return "I don't have any dice with that many sides."

@@ -12,10 +12,12 @@ def to_html(plain):
 
 
 class Message:
-    def __init__(self, plain, destination, html=None):
+    def __init__(self, plain, destination, html=None, sender=None):
+        log.debug("Message init: %s, %s, %s, %s", (plain, destination, html, sender))
         self.plain = plain
         self.html = html or to_html(plain)
         self.destination = destination
+        self.sender = sender
 
 
 class CardboardMessage:

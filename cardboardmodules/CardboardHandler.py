@@ -3,13 +3,14 @@
 
 import logging
 import time
-from cardboardmodules.CardboardMessage import CardboardMessage
+from cardboardmodules.CardboardMessage import CardboardMessage, Message
 
 log = logging.getLogger(__name__)
 
 
 class CardboardHandler:
     def __init__(self, ai, cmd, db, links, nickname, lookup):
+        log.debug("CardboardHandler init: %s, %s, %s, %s, %s, %s", (ai, cmd, db, links, nickname, lookup))
         self.ai = ai
         self.cmd = cmd
         self.db = db
@@ -18,6 +19,7 @@ class CardboardHandler:
         self.lookup = lookup
 
     def handler(self, connection, msg):
+        log.debug("CardboardHandler handler: %s, %s", (connection, msg))
         """Handle incoming messages"""
 
         messager = CardboardMessage(connection=connection, default_destination=msg["from"].bare)

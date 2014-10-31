@@ -11,6 +11,7 @@ log = logging.getLogger(__name__)
 
 class CardboardDatabase:
     def __init__(self, databasefile='cardboardlog.db'):
+        log.debug("CardboardDatabase init")
         self.path = databasefile
 
     def get_actions(self, type):

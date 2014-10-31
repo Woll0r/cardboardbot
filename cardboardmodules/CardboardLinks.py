@@ -13,6 +13,7 @@ log = logging.getLogger(__name__)
 
 class CardboardLinks:
     def __init__(self, db):
+        log.debug("CardboardLinks init")
         self.db = db
 
     def get_page_title(self, match, timestamp, sender):

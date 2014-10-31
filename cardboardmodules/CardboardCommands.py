@@ -10,6 +10,7 @@ log = logging.getLogger(__name__)
 
 class CardboardCommands:
     def __init__(self, db):
+        log.debug("CardboardCommands init")
         self.db = db
 
     def get_all_nicks_in_room(self, connection):

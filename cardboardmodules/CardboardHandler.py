@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 
 class CardboardHandler:
     def __init__(self, ai, cmd, db, links, nickname, lookup):
-        log.debug("CardboardHandler init: %s, %s, %s, %s, %s, %s", (ai, cmd, db, links, nickname, lookup))
+        log.debug("CardboardHandler init")
         self.ai = ai
         self.cmd = cmd
         self.db = db

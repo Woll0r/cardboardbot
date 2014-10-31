@@ -12,6 +12,7 @@ log = logging.getLogger(__name__)
 
 class CardboardLookup:
     def __init__(self, db, links):
+        log.debug("CardboardLookup init")
         self.db = db
         self.links = links
         self.messager = CardboardMessage

@@ -13,7 +13,7 @@ def to_html(plain):
 
 class Message:
     def __init__(self, plain, destination, html=None, sender=None):
-        log.debug("Message init: %s, %s, %s, %s", (plain, destination, html, sender))
+        log.debug("Message init")
         self.plain = plain
         self.html = html or to_html(plain)
         self.destination = destination
@@ -22,7 +22,7 @@ class Message:
 
 class CardboardMessage:
     def __init__(self, connection, default_destination):
-        log.debug("CardboardMessage init: %s, %s" % (connection, default_destination))
+        log.debug("CardboardMessage init")
         self.connection = connection
         self.default_destination = default_destination
 

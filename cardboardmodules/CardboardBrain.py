@@ -15,12 +15,14 @@ log = logging.getLogger(__name__)
 
 class CardboardBrain:
     def __init__(self, brainfile, memoriesfile, aimlpath, nick):
+        log.debug("CardboardBrain init")
         # Initialize Alice
         self.brain = aiml.Kernel()
         self.brain_start(brainfile, memoriesfile, aimlpath)
         self.nick = nick
 
     def brain_start(self, brainfile, memoriesfile, aimlpath):
+        log.debug("CardboardBrain brain_start")
         """Creates the brain file if needed and then loads it.
         Afterwards, the memories will be loaded so the bot gets her identity"""
         if os.path.isfile(brainfile):
@@ -40,7 +42,7 @@ class CardboardBrain:
 
     def alicemessage(self, nick, body):
         """Generate a response using Alice AI subroutines"""
-        log.debug("I don't know what %s is saying, so I'll let Alice respond for me!" % nick)
+        log.debug("Generating a message through Alice AI")
         if body.startswith(self.nick + ": "):
             body = body.replace(self.nick + ": ", "", 1)
 

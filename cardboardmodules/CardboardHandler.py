@@ -19,7 +19,7 @@ class CardboardHandler:
         self.lookup = lookup
 
     def handler(self, connection, msg):
-        log.debug("CardboardHandler handler: %s, %s", (connection, msg))
+        log.debug("CardboardHandler handler received message")
         """Handle incoming messages"""
 
         messager = CardboardMessage(connection=connection, default_destination=msg["from"].bare)

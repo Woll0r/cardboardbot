@@ -13,16 +13,16 @@ import os.path
 log = logging.getLogger(__name__)
 
 
-class CardboardBrain:
+class CardboardAlice:
     def __init__(self, brainfile, memoriesfile, aimlpath, nick):
-        log.debug("CardboardBrain init")
+        log.debug("CardboardAlice init")
         # Initialize Alice
         self.brain = aiml.Kernel()
         self.brain_start(brainfile, memoriesfile, aimlpath)
         self.nick = nick
 
     def brain_start(self, brainfile, memoriesfile, aimlpath):
-        log.debug("CardboardBrain brain_start")
+        log.debug("CardboardAlice brain_start")
         """Creates the brain file if needed and then loads it.
         Afterwards, the memories will be loaded so the bot gets her identity"""
         if os.path.isfile(brainfile):
@@ -40,7 +40,7 @@ class CardboardBrain:
         for k, v in memories.items():
             self.brain.setBotPredicate(k, v)
 
-    def alicemessage(self, nick, body):
+    def response(self, nick, body):
         """Generate a response using Alice AI subroutines"""
         log.debug("Generating a message through Alice AI")
         if body.startswith(self.nick + ": "):

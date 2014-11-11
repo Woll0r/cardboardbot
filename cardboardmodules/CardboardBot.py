@@ -18,7 +18,7 @@ import logging
 import sleekxmpp  # Jabber library
 import ssl  # SSL connections to Jabbers!
 
-from CardboardBrain import CardboardBrain
+from CardboardAlice import CardboardAlice
 from CardboardCommands import CardboardCommands
 from CardboardDatabase import CardboardDatabase
 from CardboardHandler import CardboardHandler
@@ -46,7 +46,7 @@ class CardboardBot(sleekxmpp.ClientXMPP):
             self.use_ipv6 = False
 
         # Setup handlers
-        self.ai = CardboardBrain(brainfile, memoriesfile, aimlpath, self.nick)
+        self.ai = CardboardAlice(brainfile, memoriesfile, aimlpath, self.nick)
         self.db = CardboardDatabase(databasefile)
         self.commands = CardboardCommands(self.db)
         self.links = CardboardLinks(self.db)

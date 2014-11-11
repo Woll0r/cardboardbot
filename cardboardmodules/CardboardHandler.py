@@ -147,7 +147,7 @@ class CardboardHandler:
 
             # Delegate response to Alice
             log.debug("I don't know what to say, delegating to Alice")
-            message = messager.create_message(self.ai.alicemessage(sender, messagebody))
+            message = messager.create_message(self.ai.response(sender, messagebody))
             messager.send_message(message)
             return
 

@@ -13,6 +13,6 @@ class CardboardDummyBrain:
     def response(self, nick, body):
         log.debug("Dummy response!")
 
-        resp = "Hello, " + nick + "! I am just a dumb bot, so I don't know what you mean with " + body
+        resp = "Hello, " + nick + "! My brain was replaced with a piece of string :rdderp:"
 
         return resp

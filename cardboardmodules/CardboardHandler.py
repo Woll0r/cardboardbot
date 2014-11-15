@@ -22,6 +22,14 @@ class CardboardHandler:
         log.debug("CardboardHandler handler received message")
         """Handle incoming messages"""
 
+        # Don't respond to empty messages
+        if not msg["body"]:
+            return
+
+        # Don't respond to the MOTD
+        if msg["subject"]:
+            return
+
         messager = CardboardMessage(connection=connection, default_destination=msg["from"].bare)
 
         timestamp = int(time.time())
@@ -35,10 +43,6 @@ class CardboardHandler:
         # Log messages in the database
         if userjid is not None:
             self.db.insert_in_messages_table(timestamp, sender, userjid.bare, messagebody)
-
-        # Don't respond to the MOTD
-        if not len(sender):
-            return
 
         # Don't respond to ourself
         if sender == self.nick:

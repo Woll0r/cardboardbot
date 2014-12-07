@@ -1,11 +1,17 @@
+# JID and password. The domain part of the JID is used to detemine the server.
 jid = "someJid@example.com"
 password = "foo-bar"
 
+# Enable IPv6 support for server connections. Will use this by default, so if
+# your server doesn't support IPv6, best to keep it off to prevent delays in
+# connecting
 use_ipv6 = False
 
+# Nickname and channel
 nick = "MyBotName"
 channel = "chatroomgoeshere"
 
+# Paths for the files used.
 databasefile = "cardboardlog.db"
 
 brainfile = "cardboardbrain.brn"

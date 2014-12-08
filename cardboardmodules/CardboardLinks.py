@@ -2,9 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import logging
-
 import urlparse
-import urllib
+
 import requests
 import re
 

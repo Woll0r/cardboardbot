@@ -3,7 +3,9 @@
 
 import logging
 import time
+
 from cardboardmodules.CardboardMessage import CardboardMessage, Message
+
 
 log = logging.getLogger(__name__)
 
@@ -37,6 +39,9 @@ class CardboardHandler:
         userjid = self.cmd.get_user_jid(connection, sender)
         messagebody = msg["body"]
 
+        messageobject = Message(msg["body"], sendernick=msg['mucnick'], sender=userjid.bare, html=msg["html"] or None,
+                                destination=msg["from"].bare, nick=self.nick)
+
         fullmessage = sender + ": " + messagebody
         log.info(fullmessage)
 
@@ -54,33 +59,39 @@ class CardboardHandler:
             message = messager.create_message(urls)
             messager.send_message(message)
 
-        # Administrative commands
-        if "!kick" in messagebody.lower():
-            log.debug("Kick command detected")
-            to_kick = messagebody.split("!kick ")[-1]
-            result = self.cmd.kick_user(connection, to_kick, sender, msg["from"].bare)
-            message = messager.create_message(result)
-            messager.send_message(message)
-            return
-
-        if "!identify" in messagebody.lower():
-            log.debug("Identify command detected")
-            to_identify = messagebody.split("!identify ")[-1]
-            affiliation = self.cmd.get_user_affiliation(connection, to_identify)
-            role = self.cmd.get_user_role(connection, to_identify)
-            userjid = self.cmd.get_user_jid(connection, to_identify)
-
-            message = messager.create_message("%s was identified as %s, with role %s and affiliation %s" % (
-            to_identify, userjid.bare, role, affiliation))
-            messager.send_message(message)
-            return
-
         # Respond to mentions
-        if connection.nick.lower() in messagebody.lower():
+        # if connection.nick.lower() in messagebody.lower():
+        if messageobject.is_ping:
             log.debug("Someone said my name!")
 
+            # Administrative commands
+            #if "!kick" in messagebody.lower():
+            if messageobject.command is "kick":
+                log.debug("Kick command detected")
+                #to_kick = messagebody.split("!kick ")[-1]
+                to_kick = messageobject.args
+                result = self.cmd.kick_user(connection, to_kick, sender, msg["from"].bare)
+                message = messager.create_message(result)
+                messager.send_message(message)
+                return
+
+            #if "!identify" in messagebody.lower():
+            if messageobject.command is "identify":
+                log.debug("Identify command detected")
+                #to_identify = messagebody.split("!identify ")[-1]
+                to_identify = messageobject.args
+                affiliation = self.cmd.get_user_affiliation(connection, to_identify)
+                role = self.cmd.get_user_role(connection, to_identify)
+                userjid = self.cmd.get_user_jid(connection, to_identify)
+                message = messager.create_message("%s was identified as %s, with role %s and affiliation %s" % (
+                    to_identify, userjid.bare, role, affiliation))
+                messager.send_message(message)
+                return
+
+
             # ping!
-            if "ping" in messagebody.lower():
+            #if "ping" in messagebody.lower():
+            if messageobject.command is "ping":
                 log.debug("Someone wants to send a ping!")
                 ping = messagebody.replace(self.nick + ": ", "", 1)
 
@@ -90,43 +101,50 @@ class CardboardHandler:
                 return
 
             # C/D mode
-            if messagebody.lower().endswith("c/d") or messagebody.lower().endswith("c/d?"):
+            if messageobject.plain.lower().endswith("c/d") or messageobject.plain.lower().endswith("c/d?"):
+                #if messagebody.lower().endswith("c/d") or messagebody.lower().endswith("c/d?"):
                 log.debug("Confirm/deny detected")
                 message = messager.create_message("%s: %s" % (sender, self.cmd.ceedee()))
                 messager.send_message(message)
                 return
 
             # Someone does things to me!
-            if messagebody.lower().startswith("/me"):
+            #if messagebody.lower().startswith("/me"):
+            if messageobject.plain.lower().startswith("/me"):
                 log.debug("I am being touched by %s!" % sender)
                 message = messager.create_message(self.cmd.tuch(sender, messagebody))
                 messager.send_message(message)
                 return
 
             # Tumblr argueing
-            if "argue" in messagebody.lower():
+            #if "argue" in messagebody.lower():
+            if messageobject.command is "argue":
                 log.debug("Someone wants me to argue!")
                 message = messager.create_message(self.cmd.argue())
                 messager.send_message(message)
                 return
 
             # Tumblr rant
-            if "rant" in messagebody.lower():
+            #if "rant" in messagebody.lower():
+            if messageobject.command is "rant":
                 log.debug("Someone wants me to rant!")
                 message = messager.create_message(self.cmd.rant())
                 messager.send_message(message)
                 return
 
             # Diceroll
-            if "roll" in messagebody.lower():
+            if messageobject.command is "roll":
+                #if "roll" in messagebody.lower():
                 log.debug("Someone asked for a diceroll!")
-                dice = messagebody.lower().split("roll ")[-1]
+                #dice = messagebody.lower().split("roll ")[-1]
+                dice = messageobject.args
                 message = messager.create_message(self.cmd.roll(dice))
                 messager.send_message(message)
                 return
 
             # Pony
-            if "pony" in messagebody.lower():
+            #if "pony" in messagebody.lower():
+            if messageobject.command is "pony":
                 log.debug("Someone asked for ponies!")
                 plain, html = self.lookup.pony(sender, timestamp)
                 message = messager.create_message(plaintext=plain, html=html)
@@ -134,7 +152,8 @@ class CardboardHandler:
                 return
 
             # clop
-            if "clop" in messagebody.lower():
+            #if "clop" in messagebody.lower():
+            if messageobject.command is "clop":
                 log.debug("Someone asked for clop!")
                 plain, html = self.lookup.clop(sender, timestamp)
                 message = messager.create_message(plaintext=plain, html=html)
@@ -142,8 +161,10 @@ class CardboardHandler:
                 return
 
             # subreddit
-            if "redditlookup" in messagebody.lower():
-                subreddit = messagebody.lower().split("redditlookup ")[-1]
+            #if "redditlookup" in messagebody.lower():
+            if messageobject.command is "redditlookup":
+                #subreddit = messagebody.lower().split("redditlookup ")[-1]
+                subreddit = messageobject.args
                 plain, html = self.lookup.lookup(subreddit, sender, timestamp)
                 message = messager.create_message(plaintext=plain, html=html)
                 messager.send_message(message)

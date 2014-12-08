@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import requests
 import random
+import requests
+
 
 log = logging.getLogger(__name__)
 

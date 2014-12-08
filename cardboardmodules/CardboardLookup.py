@@ -3,9 +3,11 @@
 
 import logging
 import json
-import requests
 import random
+
+import requests
 from cardboardmodules.CardboardMessage import CardboardMessage
+
 
 log = logging.getLogger(__name__)
 
@@ -56,7 +58,7 @@ class CardboardLookup:
         json_data = self.fetch_from_url(url)
         if json_data is None:
             log.warning("Unable to retrieve json")
-            return None, None, None             # Prevent errors!
+            return None, None, None  # Prevent errors!
         data = json.loads(json_data)
 
         links = self.retrieve_specific_type(data, 't3')

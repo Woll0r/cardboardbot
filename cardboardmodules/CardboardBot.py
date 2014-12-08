@@ -16,15 +16,13 @@ else:
 import logging
 
 import sleekxmpp  # Jabber library
-import ssl  # SSL connections to Jabbers!
 
 from CardboardAlice import CardboardAlice
 from CardboardCommands import CardboardCommands
-from CardboardDatabase import CardboardDatabase
+from CardboardSqlite import CardboardDatabase
 from CardboardHandler import CardboardHandler
 from CardboardLinks import CardboardLinks
 from CardboardLookup import CardboardLookup
-from CardboardMessage import CardboardMessage
 
 log = logging.getLogger(__name__)
 

@@ -114,10 +114,10 @@ class CardboardCommands:
             return "I'm sorry, %s, I can't find %s in the room. :sweetiestare:" % (sender, nick)
         if senderrole != 'moderator':
             log.debug("Kick requested by %s failed because they are not a moderator" % sender)
-            return "I'm sorry, %s, I can't find %s in the room. :sweetiestare:" % (sender, nick)
+            return "I'm sorry, %s, I can't let you do that. :sweetiestare:" % (sender, )
         if receiverrole == 'moderator':
             log.debug("Kick requested by %s failed because target %s is a moderator" % (sender, nick))
-            return "I'm sorry, %s, I can't find %s in the room. :sweetiestare:" % (sender, nick)
+            return "I'm sorry, %s, I can't do that. :sweetiestare:" % (sender, )
         userjid = self.get_user_jid(connection, nick)
         log.debug("Attempting to kick %s" % nick)
         try:

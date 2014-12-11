@@ -40,7 +40,7 @@ class CardboardHandler:
         messagebody = msg["body"]
 
         messageobject = Message(msg["body"], sendernick=msg['mucnick'], sender=userjid.bare, html=msg["html"] or None,
-                                destination=msg["from"].bare, nick=self.nick)
+                                destination=msg["from"].bare, nick=connection.nick)
 
         fullmessage = sender + ": " + messagebody
         log.info(fullmessage)
@@ -66,17 +66,17 @@ class CardboardHandler:
 
             # Administrative commands
             #if "!kick" in messagebody.lower():
-            if messageobject.command is "kick":
+            if messageobject.command == "kick":
                 log.debug("Kick command detected")
                 #to_kick = messagebody.split("!kick ")[-1]
                 to_kick = messageobject.args
-                result = self.cmd.kick_user(connection, to_kick, sender, msg["from"].bare)
+                result = self.cmd.kick_user(connection, to_kick, sender)
                 message = messager.create_message(result)
                 messager.send_message(message)
                 return
 
             #if "!identify" in messagebody.lower():
-            if messageobject.command is "identify":
+            if messageobject.command == "identify":
                 log.debug("Identify command detected")
                 #to_identify = messagebody.split("!identify ")[-1]
                 to_identify = messageobject.args
@@ -91,7 +91,7 @@ class CardboardHandler:
 
             # ping!
             #if "ping" in messagebody.lower():
-            if messageobject.command is "ping":
+            if messageobject.command == "ping":
                 log.debug("Someone wants to send a ping!")
                 ping = messagebody.replace(self.nick + ": ", "", 1)
 
@@ -118,7 +118,7 @@ class CardboardHandler:
 
             # Tumblr argueing
             #if "argue" in messagebody.lower():
-            if messageobject.command is "argue":
+            if messageobject.command == "argue":
                 log.debug("Someone wants me to argue!")
                 message = messager.create_message(self.cmd.argue())
                 messager.send_message(message)
@@ -126,14 +126,14 @@ class CardboardHandler:
 
             # Tumblr rant
             #if "rant" in messagebody.lower():
-            if messageobject.command is "rant":
+            if messageobject.command == "rant":
                 log.debug("Someone wants me to rant!")
                 message = messager.create_message(self.cmd.rant())
                 messager.send_message(message)
                 return
 
             # Diceroll
-            if messageobject.command is "roll":
+            if messageobject.command == "roll":
                 #if "roll" in messagebody.lower():
                 log.debug("Someone asked for a diceroll!")
                 #dice = messagebody.lower().split("roll ")[-1]
@@ -144,7 +144,7 @@ class CardboardHandler:
 
             # Pony
             #if "pony" in messagebody.lower():
-            if messageobject.command is "pony":
+            if messageobject.command == "pony":
                 log.debug("Someone asked for ponies!")
                 plain, html = self.lookup.pony(sender, timestamp)
                 message = messager.create_message(plaintext=plain, html=html)
@@ -153,7 +153,7 @@ class CardboardHandler:
 
             # clop
             #if "clop" in messagebody.lower():
-            if messageobject.command is "clop":
+            if messageobject.command == "clop":
                 log.debug("Someone asked for clop!")
                 plain, html = self.lookup.clop(sender, timestamp)
                 message = messager.create_message(plaintext=plain, html=html)
@@ -162,7 +162,7 @@ class CardboardHandler:
 
             # subreddit
             #if "redditlookup" in messagebody.lower():
-            if messageobject.command is "redditlookup":
+            if messageobject.command == "redditlookup":
                 #subreddit = messagebody.lower().split("redditlookup ")[-1]
                 subreddit = messageobject.args
                 plain, html = self.lookup.lookup(subreddit, sender, timestamp)

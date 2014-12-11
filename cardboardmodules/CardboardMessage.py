@@ -24,9 +24,7 @@ class Message:
         self.is_ping = self.msg_is_ping(nick, plain)
         self.is_command = self.msg_is_command(nick, plain)
         self.stripped = self.strip_nick(nick, plain)
-
         self.command, self.args = self.command_and_args(self.stripped)
-
 
     def command_and_args(self, stripped):
         if ' ' in stripped:
@@ -34,15 +32,28 @@ class Message:
         else:
             command, args = stripped, ''
 
+        command = command.lower()
+        args = args.lower()
+
         return command, args
 
     def msg_is_command(self, nick, plain):
-        return plain.lower().strip().startswith(nick.lower)
+        if nick is None:
+            return False
+        if plain is None:
+            return False
+        return plain.lower().strip().startswith(nick.lower())
 
     def msg_is_ping(self, nick, plain):
+        if nick is None:
+            return False
+        if plain is None:
+            return False
         return nick.lower() in plain.lower()
 
     def strip_nick(self, nick, plain):
+        if nick is None:
+            return plain.strip()
         plain = plain.strip()
         if plain.lower().startswith(nick.lower()):
             plain = plain[len(nick):]

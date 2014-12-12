@@ -67,7 +67,7 @@ if __name__ == '__main__':
             opts.use_ipv6 = config.use_ipv6
         except NameError:
             log.warning("use_ipv6 not specified! Disabling IPv6 support...")
-            opts.use_ipv6 = false
+            opts.use_ipv6 = False
     if opts.nick is None:
         try:
             opts.nick = config.nick

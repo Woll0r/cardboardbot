@@ -23,6 +23,7 @@ class Message:
         self.nick = nick
         self.is_ping = self.msg_is_ping(nick, plain)
         self.is_command = self.msg_is_command(nick, plain)
+        self.is_action = self.msg_is_action(plain)
         self.stripped = self.strip_nick(nick, plain)
         self.command, self.args = self.command_and_args(self.stripped)
 
@@ -36,6 +37,13 @@ class Message:
         args = args.lower()
 
         return command, args
+
+    def msg_is_action(self, plain):
+        if plain is None:
+            return False
+        if plain.startswith("/me"):
+            return True
+        return False
 
     def msg_is_command(self, nick, plain):
         if nick is None:

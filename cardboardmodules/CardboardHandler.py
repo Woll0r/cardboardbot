@@ -65,7 +65,6 @@ class CardboardHandler:
             log.debug("Someone said my name!")
 
             # Administrative commands
-            #if "!kick" in messagebody.lower():
             if messageobject.command == "kick":
                 log.debug("Kick command detected")
                 #to_kick = messagebody.split("!kick ")[-1]
@@ -75,7 +74,6 @@ class CardboardHandler:
                 messager.send_message(message)
                 return
 
-            #if "!identify" in messagebody.lower():
             if messageobject.command == "identify":
                 log.debug("Identify command detected")
                 #to_identify = messagebody.split("!identify ")[-1]
@@ -88,9 +86,7 @@ class CardboardHandler:
                 messager.send_message(message)
                 return
 
-
             # ping!
-            #if "ping" in messagebody.lower():
             if messageobject.command == "ping":
                 log.debug("Someone wants to send a ping!")
                 ping = messagebody.replace(self.nick + ": ", "", 1)
@@ -100,24 +96,7 @@ class CardboardHandler:
 
                 return
 
-            # C/D mode
-            if messageobject.plain.lower().endswith("c/d") or messageobject.plain.lower().endswith("c/d?"):
-                #if messagebody.lower().endswith("c/d") or messagebody.lower().endswith("c/d?"):
-                log.debug("Confirm/deny detected")
-                message = messager.create_message("%s: %s" % (sender, self.cmd.ceedee()))
-                messager.send_message(message)
-                return
-
-            # Someone does things to me!
-            #if messagebody.lower().startswith("/me"):
-            if messageobject.plain.lower().startswith("/me"):
-                log.debug("I am being touched by %s!" % sender)
-                message = messager.create_message(self.cmd.tuch(sender, messagebody))
-                messager.send_message(message)
-                return
-
             # Tumblr argueing
-            #if "argue" in messagebody.lower():
             if messageobject.command == "argue":
                 log.debug("Someone wants me to argue!")
                 message = messager.create_message(self.cmd.argue())
@@ -125,7 +104,6 @@ class CardboardHandler:
                 return
 
             # Tumblr rant
-            #if "rant" in messagebody.lower():
             if messageobject.command == "rant":
                 log.debug("Someone wants me to rant!")
                 message = messager.create_message(self.cmd.rant())
@@ -143,7 +121,6 @@ class CardboardHandler:
                 return
 
             # Pony
-            #if "pony" in messagebody.lower():
             if messageobject.command == "pony":
                 log.debug("Someone asked for ponies!")
                 plain, html = self.lookup.pony(sender, timestamp)
@@ -152,7 +129,6 @@ class CardboardHandler:
                 return
 
             # clop
-            #if "clop" in messagebody.lower():
             if messageobject.command == "clop":
                 log.debug("Someone asked for clop!")
                 plain, html = self.lookup.clop(sender, timestamp)
@@ -161,12 +137,26 @@ class CardboardHandler:
                 return
 
             # subreddit
-            #if "redditlookup" in messagebody.lower():
             if messageobject.command == "redditlookup":
                 #subreddit = messagebody.lower().split("redditlookup ")[-1]
                 subreddit = messageobject.args
                 plain, html = self.lookup.lookup(subreddit, sender, timestamp)
                 message = messager.create_message(plaintext=plain, html=html)
+                messager.send_message(message)
+                return
+
+            # Someone does things to me!
+            if messageobject.is_action:
+                log.debug("I am being touched by %s!" % sender)
+                message = messager.create_message(self.cmd.tuch(sender, messagebody))
+                messager.send_message(message)
+                return
+
+            # C/D mode
+            if messageobject.plain.lower().endswith("c/d") or messageobject.plain.lower().endswith("c/d?"):
+                #if messagebody.lower().endswith("c/d") or messagebody.lower().endswith("c/d?"):
+                log.debug("Confirm/deny detected")
+                message = messager.create_message("%s: %s" % (sender, self.cmd.ceedee()))
                 messager.send_message(message)
                 return
 

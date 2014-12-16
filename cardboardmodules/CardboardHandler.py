@@ -81,8 +81,11 @@ class CardboardHandler:
                 affiliation = self.cmd.get_user_affiliation(connection, to_identify)
                 role = self.cmd.get_user_role(connection, to_identify)
                 userjid = self.cmd.get_user_jid(connection, to_identify)
-                message = messager.create_message("%s was identified as %s, with role %s and affiliation %s" % (
-                    to_identify, userjid.bare, role, affiliation))
+                if affiliation:
+                    message = messager.create_message("%s was identified as %s, with role %s and affiliation %s" % (
+                        to_identify, userjid.bare, role, affiliation))
+                else:
+                    message = messager.create_message("%s is not in the room!" % (to_identify, ))
                 messager.send_message(message)
                 return
 

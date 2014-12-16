@@ -103,7 +103,7 @@ if __name__ == '__main__':
             opts.aimlpath = config.aimlpath
         except NameError:
             log.warning("aimlpath not defined! Using default value...")
-            opts.brainfile = "aiml/std-startup.xml"
+            opts.aimlpath = "aiml/std-startup.xml"
 
     # Set up the bot and it's required XMPP things
     xmpp = CardboardBot.CardboardBot(opts.jid, opts.password, opts.nick, opts.channel, opts.use_ipv6, opts.brainfile,

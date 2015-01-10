@@ -124,7 +124,7 @@ class CardboardCommands:
             kick = connection.plugin['xep_0045'].setRole(connection.channel, nick=nick, role="none")
             if kick:
                 log.debug("Kicking of %s successful" % nick)
-                return "%s was kicked. :sweetiestare:"
+                return "%s was kicked. :sweetiestare:" % nick
             else:
                 log.debug("Kicking of %s failed" % nick)
                 return "I could not kick %s, maybe do it yourself instead? :sweetiestare:" % nick

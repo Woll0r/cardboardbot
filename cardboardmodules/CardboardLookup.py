@@ -98,3 +98,8 @@ class CardboardLookup:
         """Get a random link from /r/mylittlepony"""
         url, title, nsfw = self.get_link("http://reddit.com/r/mylittlepony.json?count=100", sender, timestamp)
         return self.build_message(url, title, nsfw)
+
+    def ferret(self, sender, timestamp):
+        """Get a random ferret"""
+        url, title, nsfw = self.get_link("http://reddit.com/r/ferret.json?count=100", sender, timestamp)
+        return self.build_message(url, title, nsfw)

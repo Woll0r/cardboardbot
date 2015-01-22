@@ -139,6 +139,14 @@ class CardboardHandler:
                 messager.send_message(message)
                 return
 
+            # ferret
+            if messageobject.command == "ferret":
+                log.debug("Someone asked for ferrets!")
+                plain, html = self.lookup.ferret(sender, timestamp)
+                message = messager.create_message(plaintext=plain, html=html)
+                messager.send_message(message)
+                return
+
             # subreddit
             if messageobject.command == "redditlookup":
                 #subreddit = messagebody.lower().split("redditlookup ")[-1]

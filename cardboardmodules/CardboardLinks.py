@@ -19,8 +19,11 @@ class CardboardLinks:
         from bs4 import BeautifulSoup
 
         try:
+            # Set our user-agent
             headers = {'user-agent': 'cardboardbot'}
-            res = requests.get(match, timeout=5, headers=headers)
+
+            # Get headers for the content linked
+            thing = requests.head(match, timeout=5, headers=headers)
 
             domain = urlparse.urlparse(match).hostname.split(".")
             domain = ".".join(len(domain[-2]) < 4 and domain[-3:] or domain[-2:])
@@ -32,10 +35,14 @@ class CardboardLinks:
             if domain == "facdn.net":
                 domain = "furaffinity.net"
 
-            if not 'html' in res.headers['content-type']:
+            # If this isn't HTML, we don't want to know more
+            if not 'html' in thing.headers['content-type']:
                 log.debug("%s isn't HTML!" % match)
                 self.db.insert_in_link_table(timestamp, sender, match, match, domain)
                 return None
+
+            # If it is HTML, we fetch the title
+            res = requests.get(match, timeout=5, headers=headers)
             soup = BeautifulSoup(res.text)
             title = soup.title.string.strip()
             log.debug(title)

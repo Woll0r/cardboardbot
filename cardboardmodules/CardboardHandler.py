@@ -156,6 +156,14 @@ class CardboardHandler:
                 messager.send_message(message)
                 return
 
+
+            # deowl
+            if messageobject.command == "deowl":
+                result = self.cmd.kick_user(connection, "owlowiscious", self.nick)
+                message = messager.create_message(result)
+                messager.send_message(message)
+                return
+
             # Someone does things to me!
             if messageobject.is_action:
                 log.debug("I am being touched by %s!" % sender)

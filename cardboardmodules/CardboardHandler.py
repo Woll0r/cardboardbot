@@ -159,7 +159,7 @@ class CardboardHandler:
 
             # deowl
             if messageobject.command == "deowl":
-                result = self.cmd.kick_user(connection, "owlowiscious", self.nick)
+                result = self.cmd.kick_user(connection, "owlowiscious", sender)
                 message = messager.create_message(result)
                 messager.send_message(message)
                 return

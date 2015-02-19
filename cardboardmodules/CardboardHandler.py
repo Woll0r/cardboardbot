@@ -164,6 +164,16 @@ class CardboardHandler:
                 messager.send_message(message)
                 return
 
+            # deflower
+            if messageobject.command == "deflower":
+                if self.cmd.get_user_affiliation(connection, "roseluck") is not None:
+                    result = self.cmd.kick_user(connection, "roseluck", sender)
+                else:
+                    result = self.cmd.kick_user(connection, "Roseluck", sender)
+                message = messager.create_message(result)
+                messager.send_message(message)
+                return
+
             # Someone does things to me!
             if messageobject.is_action:
                 log.debug("I am being touched by %s!" % sender)

@@ -34,7 +34,7 @@ class Message:
             command, args = stripped, ''
 
         command = command.lower()
-        args = args.lower()
+        #args = args.lower()
 
         return command, args
 

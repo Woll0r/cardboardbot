@@ -109,12 +109,12 @@ class CardboardCommands:
         """Kick a user from the room"""
         senderrole = self.get_user_role(connection, sender)
         receiverrole = self.get_user_role(connection, nick)
-        if receiverrole is None:
-            log.debug("Kick requested by %s failed because target %s is not in the room" % (sender, nick))
-            return "I'm sorry, %s, I can't find %s in the room. :sweetiestare:" % (sender, nick)
         if senderrole != 'moderator':
             log.debug("Kick requested by %s failed because they are not a moderator" % sender)
             return "I'm sorry, %s, I can't let you do that. :sweetiestare:" % (sender, )
+        if receiverrole is None:
+            log.debug("Kick requested by %s failed because target %s is not in the room" % (sender, nick))
+            return "I'm sorry, %s, I can't find %s in the room. :sweetiestare:" % (sender, nick)
         if receiverrole == 'moderator':
             log.debug("Kick requested by %s failed because target %s is a moderator" % (sender, nick))
             return "I'm sorry, %s, I can't do that. :sweetiestare:" % (sender, )

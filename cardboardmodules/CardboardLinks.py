@@ -68,10 +68,12 @@ class CardboardLinks:
             result = json.loads(res.text)
             log.debug(result)
             title = result['title'] + ' by ' + result['author_name']
-            self.db.insert_in_link_table(timestamp, sender, url, title, domain)
+            link = result['url']
+            self.db.insert_in_link_table(timestamp, sender, link, title, domain)
             return title
         except Exception as e:
             log.error("error fetching url " + url + " : " + str(e))
+            pass
 
     def handle_url(self, timestamp, sender, body):
         """Handle URL's and get titles from the pages"""

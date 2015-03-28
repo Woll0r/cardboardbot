@@ -75,6 +75,28 @@ class CardboardLinks:
             log.error("error fetching url " + url + " : " + str(e))
             pass
 
+    def get_e621_title(self, url, timestamp, sender):
+        import json
+
+        try:
+            headers = {'user-agent': 'cardboardbot'}
+            res = requests.get(url, timeout=5, headers=headers)
+
+            domain = urlparse.urlparse(url).hostname.split(".")
+            domain = ".".join(len(domain[-2]) < 4 and domain[-3:] or domain[-2:])
+
+            result = json.loads(res.text)
+            log.debug(result)
+
+            title = '#' + result['id'] + ' ' + result['tags']
+            link = 'https://e621.net/post/show/' + result['id']
+
+            self.db.insert_in_link_table(timestamp, sender, link, title, domain)
+            return title
+        except Exception as e:
+            log.error("error fetching url " + url + " : " + str(e))
+            pass
+
     def handle_url(self, timestamp, sender, body):
         """Handle URL's and get titles from the pages"""
         urlregex = re.compile(
@@ -90,6 +112,8 @@ class CardboardLinks:
             for match in matches:
                 if 'oembed' in match:
                     title = self.get_oembed_page_title(match, timestamp, sender)
+                elif 'e621' in match:
+                    title = self.get_e621_title(match, timestamp, sender)
                 else:
                     title = self.get_page_title(match, timestamp, sender)
 
@@ -118,7 +142,7 @@ class CardboardLinks:
             r'http(s)?://static([0-9]*).e621.net/data(/sample)?.*?((?:[a-z0-9][a-z0-9]*[a-z0-9][a-z0-9]+[a-z0-9]*))')
         match = e621regex.match(link)
         if (match):
-            replacement = 'https://e621.net/post/show?md5=' + match.group(4)
+            replacement = 'https://e621.net/post/show.json?md5=' + match.group(4)
             log.debug("replacing " + link + " with " + replacement)
             return replacement
         return link

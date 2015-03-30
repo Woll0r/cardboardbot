@@ -105,14 +105,15 @@ class CardboardLinks:
         matches = map(lambda x: x[0], matches)
         matches = map(self.imgur_filter, matches)
         matches = map(self.e621_filter, matches)
+        matches = map(self.derpibooru_filter, matches)
         matches = map(self.deviantart_filter, matches)
         if matches:
             log.debug("I think I see an URL! " + " / ".join(matches))
             results = []
             for match in matches:
-                if 'oembed' in match:
+                if 'backend.deviantart.com/oembed' in match:
                     title = self.get_oembed_page_title(match, timestamp, sender)
-                elif 'e621' in match:
+                elif 'e621.net' in match and 'json' in match:
                     title = self.get_e621_title(match, timestamp, sender)
                 else:
                     title = self.get_page_title(match, timestamp, sender)
@@ -144,6 +145,17 @@ class CardboardLinks:
         if (match):
             replacement = 'https://e621.net/post/show.json?md5=' + match.group(4)
             log.debug("replacing " + link + " with " + replacement)
+            return replacement
+        return link
+
+    def derpibooru_filter(self, link):
+        """Convert derpibooru image links into their full fledged counterparts"""
+        derpibooruregex = re.compile(
+            r'http(s)?://derpicdn.net/img/view/([0-9]{4}/[0-9]{1,2}/[0-9]{1,2})/([0-9]+)')
+        match = derpibooruregex.match(link)
+        if (match):
+            replacement = 'https://derpibooru.org/' + match.group(3)
+            log.debug("Replacing " + link + " with " + replacement)
             return replacement
         return link
 

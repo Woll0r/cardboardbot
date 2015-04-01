@@ -19,7 +19,7 @@ class CardboardPresenceHandler:
         timestamp = int(time.time())
         presencetype = presence['type']
 
-        if presencetype is 'unavailable':
+        if presencetype == 'unavailable':
             log.info("%s just went offline! Saving current time..." % nick)
             self.db.update_presence(nick, jid, timestamp)
         

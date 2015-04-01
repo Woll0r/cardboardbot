@@ -36,7 +36,7 @@ class CardboardMessageHandler:
 
         timestamp = int(time.time())
         sender = msg["mucnick"]
-        userjid = self.cmd.get_user_jid(connection, sender)
+        userjid = self.cmd.get_user_jid(sender)
         messagebody = msg["body"]
 
         messageobject = Message(msg["body"], sendernick=msg['mucnick'], sender=userjid.bare, html=msg["html"] or None,
@@ -69,7 +69,7 @@ class CardboardMessageHandler:
                 log.debug("Kick command detected")
                 #to_kick = messagebody.split("!kick ")[-1]
                 to_kick = messageobject.args
-                result = self.cmd.kick_user(connection, to_kick, sender)
+                result = self.cmd.kick_user(to_kick, sender)
                 message = messager.create_message(result)
                 messager.send_message(message)
                 return
@@ -78,9 +78,9 @@ class CardboardMessageHandler:
                 log.debug("Identify command detected")
                 #to_identify = messagebody.split("!identify ")[-1]
                 to_identify = messageobject.args
-                affiliation = self.cmd.get_user_affiliation(connection, to_identify)
-                role = self.cmd.get_user_role(connection, to_identify)
-                userjid = self.cmd.get_user_jid(connection, to_identify)
+                affiliation = self.cmd.get_user_affiliation(to_identify)
+                role = self.cmd.get_user_role(to_identify)
+                userjid = self.cmd.get_user_jid(to_identify)
                 if affiliation:
                     message = messager.create_message("%s was identified as %s, with role %s and affiliation %s" % (
                         to_identify, userjid.bare, role, affiliation))
@@ -97,6 +97,14 @@ class CardboardMessageHandler:
                 message = messager.create_message(plaintext=ping, destination='sweetiebutt@friendshipismagicsquad.com')
                 messager.send_message(message, type='chat')
 
+                return
+
+            # Last seen
+            if messageobject.command == "seen":
+                log.debug("Someone wants to know when a person was last online!")
+                requested_nick = messageobject.args
+                message = messager.create_message(self.cmd.seen(requested_nick))
+                messager.send_message(message)
                 return
 
             # Tumblr argueing

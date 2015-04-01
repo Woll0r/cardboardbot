@@ -46,8 +46,8 @@ class CardboardBot(sleekxmpp.ClientXMPP):
 
         # Setup handlers
         self.ai = CardboardAlice(brainfile, memoriesfile, aimlpath, self.nick)
-        self.db = CardboardDatabase(databasefile)
-        self.commands = CardboardCommands(self.db)
+        self.db = CardboardDatabase(databasefile=databasefile)
+        self.commands = CardboardCommands(db=self.db, connection=self)
         self.links = CardboardLinks(self.db)
         self.lookup = CardboardLookup(self.db, self.links)
         self.messagehandler = CardboardMessageHandler(self.ai, self.commands, self.db, self.links, self.nick,

@@ -32,6 +32,22 @@ class CardboardDatabase:
             if con:
                 con.close()
         return actions
+    
+    def get_last_logoff(self, nick):
+        try:
+            con = sqlite3.connect(self.path)
+            cur = con.cursor()
+            cmd = "SELECT timestamp FROM cardboardnick WHERE nick = ?;"
+            cur.execute(cmd, (nick, ))
+            results = cur.fetchall()
+            if results is None:
+                return None
+            else:
+                return results[0][0]
+        except sqlite3.Error as e:
+            if con:
+                con.rollback()
+            log.warning("Error in SQLite processing: %s" % e.args[0])
 
     def insert_in_messages_table(self, timestamp, nick, jid, message):
         try:

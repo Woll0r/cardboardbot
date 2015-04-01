@@ -64,6 +64,7 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         log.debug("Initialize event handlers...")
         self.add_event_handler("session_start", self.start)
         self.add_event_handler("groupchat_message", self.groupchatmessage)
+        self.add_event_handler("groupchat_presence", self.groupchatpresence)
 
     # Handle the start event (connection to Jabber)
     def start(self, event):

@@ -10,9 +10,9 @@ from cardboardmodules.CardboardMessage import CardboardMessage, Message
 log = logging.getLogger(__name__)
 
 
-class CardboardHandler:
+class CardboardMessageHandler:
     def __init__(self, ai, cmd, db, links, nickname, lookup):
-        log.debug("CardboardHandler init")
+        log.debug("CardboardPresenceHandler init")
         self.ai = ai
         self.cmd = cmd
         self.db = db
@@ -21,7 +21,7 @@ class CardboardHandler:
         self.lookup = lookup
 
     def handler(self, connection, msg):
-        log.debug("CardboardHandler handler received message")
+        log.debug("handler received message")
         """Handle incoming messages"""
 
         # Don't respond to empty messages

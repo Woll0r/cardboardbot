@@ -77,3 +77,28 @@ class CardboardDatabase:
             if con:
                 con.commit()
                 con.close() 
+
+    def update_presence(self, nick, jid, timestamp):
+        try:
+            con = sqlite3.connect(self.path)
+            cur = con.cursor()
+            cmd = "SELECT * FROM cardboardnick WHERE JID = ?;"
+            cur.execute(cmd, (jid, ))
+            namecheck = cur.fetchone()
+            if namecheck is None:
+                log.debug("Name doesn't exist")
+                cmd = "INSERT INTO cardboardnick(jid, nick, timestamp) VALUES(?, ?, ?);"
+                cur.execute(cmd, (jid, nick, timestamp))
+                logging.debug("Name not found in database, inserted!")
+            else:
+                cmd = "UPDATE cardboardnick SET timestamp = ? WHERE jid = ?;"
+                cur.execute(cmd, (timestamp, jid))
+        except sqlite3.Error as e:
+            if con:
+                con.rollback()
+            log.critical("Fatal error in SQLite processing: %s" % e.args[0])
+            exit(1)
+        finally:
+            if con:
+                con.commit()
+                con.close()

@@ -20,9 +20,10 @@ import sleekxmpp  # Jabber library
 from CardboardAlice import CardboardAlice
 from CardboardCommands import CardboardCommands
 from CardboardSqlite import CardboardDatabase
-from CardboardHandler import CardboardHandler
+from CardboardMessageHandler import CardboardMessageHandler
 from CardboardLinks import CardboardLinks
 from CardboardLookup import CardboardLookup
+from CardboardPresenceHandler import CardboardPresenceHandler
 
 log = logging.getLogger(__name__)
 
@@ -49,19 +50,20 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         self.commands = CardboardCommands(self.db)
         self.links = CardboardLinks(self.db)
         self.lookup = CardboardLookup(self.db, self.links)
-        self.handler = CardboardHandler(self.ai, self.commands, self.db, self.links, self.nick,
+        self.messagehandler = CardboardMessageHandler(self.ai, self.commands, self.db, self.links, self.nick,
                                         self.lookup)
-
-        # Add event handling for Jabber events
-        log.debug("Initialize event handlers...")
-        self.add_event_handler("session_start", self.start)
-        self.add_event_handler("groupchat_message", self.groupchatmessage)
+        self.presencehandler = CardboardPresenceHandler(self.db)
 
         self.register_plugin('xep_0030')  # Service Discovery
         self.register_plugin('xep_0004')  # Data Forms
         self.register_plugin('xep_0045')  # Jabber MUC
         self.register_plugin('xep_0060')  # PubSub
         self.register_plugin('xep_0199')  # XMPP Ping
+
+        # Add event handling for Jabber events
+        log.debug("Initialize event handlers...")
+        self.add_event_handler("session_start", self.start)
+        self.add_event_handler("groupchat_message", self.groupchatmessage)
 
     # Handle the start event (connection to Jabber)
     def start(self, event):
@@ -72,4 +74,8 @@ class CardboardBot(sleekxmpp.ClientXMPP):
 
     def groupchatmessage(self, event):
         log.debug("I got a message! Sending to handler!")
-        self.handler.handler(self, event)
+        self.messagehandler.handler(self, event)
+
+    def groupchatpresence(self, event):
+        log.debug("I got a presence! Sending to handler!")
+        self.presencehandler.handler(event)

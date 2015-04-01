@@ -29,10 +29,13 @@
     <Compile Include="cardboardmodules\CardboardBot.py" />
     <Compile Include="cardboardmodules\CardboardCommands.py" />
     <Compile Include="cardboardmodules\CardboardDummyBrain.py" />
-    <Compile Include="cardboardmodules\CardboardHandler.py" />
+    <Compile Include="cardboardmodules\CardboardMessageHandler.py" />
     <Compile Include="cardboardmodules\CardboardLinks.py" />
     <Compile Include="cardboardmodules\CardboardLookup.py" />
     <Compile Include="cardboardmodules\CardboardMessage.py" />
+    <Compile Include="cardboardmodules\CardboardPresenceHandler.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="cardboardmodules\CardboardSqlite.py" />
     <Compile Include="cardboardmodules\__init__.py" />
     <Compile Include="helpers\cardboardbrain.py" />

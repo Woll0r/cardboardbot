@@ -17,7 +17,7 @@ class CardboardCommands:
         self.connection = connection
 
     def get_all_nicks_in_room(self):
-        nicklist = self.connection.plugin['xep_0045'].getRoster(connection.channel)
+        nicklist = self.connection.plugin['xep_0045'].getRoster(self.connection.channel)
         return nicklist
 
     def get_all_jids_in_room(self):
@@ -94,17 +94,17 @@ class CardboardCommands:
 
     def get_user_affiliation(self, nick):
         """Get a user's affiliation with the room"""
-        useraffiliation = self.connection.plugin['xep_0045'].getJidProperty(connection.channel, nick, 'affiliation')
+        useraffiliation = self.connection.plugin['xep_0045'].getJidProperty(self.connection.channel, nick, 'affiliation')
         return useraffiliation
 
     def get_user_jid(self, nick):
         """Get the JID from a user based on their nick"""
-        userjid = self.connection.plugin['xep_0045'].getJidProperty(connection.channel, nick, 'jid')
+        userjid = self.connection.plugin['xep_0045'].getJidProperty(self.connection.channel, nick, 'jid')
         return userjid
 
     def get_user_role(self, nick):
         """Get a user's affiliation with the room"""
-        userrole = self.connection.plugin['xep_0045'].getJidProperty(connection.channel, nick, 'role')
+        userrole = self.connection.plugin['xep_0045'].getJidProperty(self.connection.channel, nick, 'role')
         return userrole
 
     def kick_user(self, nick, sender):

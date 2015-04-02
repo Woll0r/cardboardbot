@@ -211,5 +211,5 @@ class CardboardCommands:
             return "I'm sorry, I have no idea when %s last logged off." % nick
         else:
             timestamp = datetime.datetime.fromtimestamp(result)
-            timestring = datetime.date.strftime("%x %X")
+            timestring = timestamp.strftime("%x %X")
             return "%s last logged off at %s" % nick, timestring

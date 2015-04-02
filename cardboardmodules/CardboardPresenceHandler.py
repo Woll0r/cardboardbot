@@ -14,8 +14,8 @@ class CardboardPresenceHandler:
 
     def handler(self, presence):
         log.debug("Presence received!")
-        nick = presence['muc']['nick']
-        jid = presence['muc']['jid']
+        nick = str(presence['muc']['nick'])
+        jid = str(presence['muc']['jid'])
         timestamp = int(time.time())
         presencetype = presence['type']
 

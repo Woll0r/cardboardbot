@@ -15,11 +15,12 @@ class CardboardPresenceHandler:
     def handler(self, presence):
         log.debug("Presence received!")
         nick = str(presence['muc']['nick'])
-        jid = str(presence['muc']['jid'])
+        jid = presence['muc']['jid']
+        barejid = jid.bare
         timestamp = int(time.time())
         presencetype = presence['type']
 
         if presencetype == 'unavailable':
             log.info("%s just went offline! Saving current time..." % nick)
-            self.db.update_presence(nick, jid, timestamp)
+            self.db.update_presence(nick, barejid, timestamp)
         

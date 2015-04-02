@@ -212,4 +212,4 @@ class CardboardCommands:
         else:
             timestamp = datetime.datetime.fromtimestamp(result)
             timestring = timestamp.strftime("%x %X")
-            return "%s last logged off at %s" % nick, timestring
+            return "%s last logged off at %s" % (nick, timestring)

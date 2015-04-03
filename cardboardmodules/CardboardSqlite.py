@@ -37,7 +37,7 @@ class CardboardDatabase:
         try:
             con = sqlite3.connect(self.path)
             cur = con.cursor()
-            cmd = "SELECT timestamp FROM cardboardnick WHERE nick = ?;"
+            cmd = "SELECT timestamp FROM cardboardnick WHERE UPPER(nick) = UPPER(?);"
             cur.execute(cmd, (nick, ))
             results = cur.fetchall()
             if results is None:

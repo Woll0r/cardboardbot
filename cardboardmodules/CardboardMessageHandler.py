@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 
 class CardboardMessageHandler:
-    def __init__(self, ai, cmd, db, links, nickname, lookup):
+    def __init__(self, ai, cmd, db, links, nickname, lookup, connection):
         log.debug("CardboardPresenceHandler init")
         self.ai = ai
         self.cmd = cmd
@@ -19,8 +19,9 @@ class CardboardMessageHandler:
         self.links = links
         self.nick = nickname
         self.lookup = lookup
+        self.connection = connection
 
-    def handler(self, connection, msg):
+    def handler(self, msg):
         log.debug("handler received message")
         """Handle incoming messages"""
 
@@ -32,7 +33,7 @@ class CardboardMessageHandler:
         if msg["subject"]:
             return
 
-        messager = CardboardMessage(connection=connection, default_destination=msg["from"].bare)
+        messager = CardboardMessage(connection=self.connection, default_destination=msg["from"].bare)
 
         timestamp = int(time.time())
         sender = msg["mucnick"]
@@ -40,7 +41,7 @@ class CardboardMessageHandler:
         messagebody = msg["body"]
 
         messageobject = Message(msg["body"], sendernick=msg['mucnick'], sender=userjid.bare, html=msg["html"] or None,
-                                destination=msg["from"].bare, nick=connection.nick)
+                                destination=msg["from"].bare, nick=self.connection.nick)
 
         fullmessage = sender + ": " + messagebody
         log.info(fullmessage)
@@ -167,17 +168,17 @@ class CardboardMessageHandler:
 
             # deowl
             if messageobject.command == "deowl":
-                result = self.cmd.kick_user(connection, "owlowiscious", sender)
+                result = self.cmd.kick_user("owlowiscious", sender)
                 message = messager.create_message(result)
                 messager.send_message(message)
                 return
 
             # deflower
             if messageobject.command == "deflower":
-                if self.cmd.get_user_affiliation(connection, "roseluck") is not None:
-                    result = self.cmd.kick_user(connection, "roseluck", sender)
+                if self.cmd.get_user_affiliation("roseluck") is not None:
+                    result = self.cmd.kick_user("roseluck", sender)
                 else:
-                    result = self.cmd.kick_user(connection, "Roseluck", sender)
+                    result = self.cmd.kick_user("Roseluck", sender)
                 message = messager.create_message(result)
                 messager.send_message(message)
                 return

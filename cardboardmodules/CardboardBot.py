@@ -4,7 +4,7 @@
 import sys
 
 # Python versions before 3.0 do not use UTF-8 encoding
-# by default. To ensure that Unicode is handled properly
+# by default.  To ensure that Unicode is handled properly
 # throughout SleekXMPP, we will set the default encoding
 # ourselves to UTF-8.
 if sys.version_info < (3, 0):
@@ -16,7 +16,6 @@ else:
 import logging
 
 import sleekxmpp  # Jabber library
-
 from CardboardAlice import CardboardAlice
 from CardboardCommands import CardboardCommands
 from CardboardSqlite import CardboardDatabase
@@ -45,14 +44,14 @@ class CardboardBot(sleekxmpp.ClientXMPP):
             self.use_ipv6 = False
 
         # Setup handlers
-        self.ai = CardboardAlice(brainfile, memoriesfile, aimlpath, self.nick)
+        self.ai = CardboardAlice(brainfile=brainfile, memoriesfile=memoriesfile, aimlpath=aimlpath, nick=self.nick)
         self.db = CardboardDatabase(databasefile=databasefile)
         self.commands = CardboardCommands(db=self.db, connection=self)
-        self.links = CardboardLinks(self.db)
-        self.lookup = CardboardLookup(self.db, self.links)
-        self.messagehandler = CardboardMessageHandler(self.ai, self.commands, self.db, self.links, self.nick,
-                                        self.lookup)
-        self.presencehandler = CardboardPresenceHandler(self.db)
+        self.links = CardboardLinks(db=self.db)
+        self.lookup = CardboardLookup(db=self.db, links=self.links)
+        self.messagehandler = CardboardMessageHandler(ai=self.ai, cmd=self.commands, db=self.db, links=self.links, nick=self.nick,
+                                        lookup=self.lookup, connection=self)
+        self.presencehandler = CardboardPresenceHandler(db=self.db)
 
         self.register_plugin('xep_0030')  # Service Discovery
         self.register_plugin('xep_0004')  # Data Forms
@@ -75,7 +74,7 @@ class CardboardBot(sleekxmpp.ClientXMPP):
 
     def groupchatmessage(self, event):
         log.debug("I got a message! Sending to handler!")
-        self.messagehandler.handler(self, event)
+        self.messagehandler.handler(event)
 
     def groupchatpresence(self, event):
         log.debug("I got a presence! Sending to handler!")

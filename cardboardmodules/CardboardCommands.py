@@ -24,7 +24,7 @@ class CardboardCommands:
         nicklist = self.get_all_nicks_in_room()
         jidlist = []
         for nick in nicklist:
-            jid = self.get_user_jid(nick)
+            jid = self.get_user_jid(nick=nick)
             jidlist.append(jid.bare)
         return jidlist
 
@@ -76,21 +76,21 @@ class CardboardCommands:
     def tuch(self, nick, body):
         """Someone does something to me, decide what to do with them"""
         log.debug("Getting actions from database")
-        niceActions = self.db.get_actions("nice")
-        sexActions = self.db.get_actions("sex")
+        niceActions = self.db.get_actions(type="nice")
+        sexActions = self.db.get_actions(type="sex")
 
         if "pets" in body.lower():
             log.debug("%s is petting me!" % nick)
             return "/me purrs :sweetiepleased:"
         if [i for i in niceActions if i in body.lower()]:
             log.debug("%s is doing nice things to me!" % nick)
-            return self.goodtuch(nick)
+            return self.goodtuch(nick=nick)
         if [i for i in sexActions if i in body.lower()]:
             log.debug("%s is doing sex things to me!" % nick)
-            return self.sextuch(nick)
+            return self.sextuch(nick=nick)
         else:
             log.debug("%s is doing bad things to me!" % nick)
-            return self.badtuch(nick)
+            return self.badtuch(nick=nick)
 
     def get_user_affiliation(self, nick):
         """Get a user's affiliation with the room"""
@@ -109,8 +109,8 @@ class CardboardCommands:
 
     def kick_user(self, nick, sender):
         """Kick a user from the room"""
-        senderrole = self.get_user_role(sender)
-        receiverrole = self.get_user_role(nick)
+        senderrole = self.get_user_role(nick=sender)
+        receiverrole = self.get_user_role(nick=nick)
         if senderrole != 'moderator':
             log.debug("Kick requested by %s failed because they are not a moderator" % sender)
             return "I'm sorry, %s, I can't let you do that. :sweetiestare:" % (sender, )
@@ -120,7 +120,7 @@ class CardboardCommands:
         if receiverrole == 'moderator':
             log.debug("Kick requested by %s failed because target %s is a moderator" % (sender, nick))
             return "I'm sorry, %s, I can't do that. :sweetiestare:" % (sender, )
-        userjid = self.get_user_jid(nick)
+        userjid = self.get_user_jid(nick=nick)
         log.debug("Attempting to kick %s" % nick)
         try:
             kick = self.connection.plugin['xep_0045'].setRole(self.connection.channel, nick=nick, role="none")

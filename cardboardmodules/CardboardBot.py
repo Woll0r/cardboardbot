@@ -49,7 +49,7 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         self.commands = CardboardCommands(db=self.db, connection=self)
         self.links = CardboardLinks(db=self.db)
         self.lookup = CardboardLookup(db=self.db, links=self.links)
-        self.messagehandler = CardboardMessageHandler(ai=self.ai, cmd=self.commands, db=self.db, links=self.links, nick=self.nick,
+        self.messagehandler = CardboardMessageHandler(ai=self.ai, cmd=self.commands, db=self.db, links=self.links, nickname=self.nick,
                                         lookup=self.lookup, connection=self)
         self.presencehandler = CardboardPresenceHandler(db=self.db)
 

@@ -49,6 +49,22 @@ class CardboardDatabase:
                 con.rollback()
             log.warning("Error in SQLite processing: %s" % e.args[0])
 
+    def get_last_message(self, nick):
+        try:
+            con = sqlite3.connect(self.path)
+            cur = con.cursor()
+            cmd = "SELECT l.timestamp FROM cardboardlog l, cardboardnick n WHERE l.name = n.jid AND UPPER(n.nick) = UPPER(?) ORDER BY l.timestamp DESC LIMIT 1;"
+            cur.execute(cmd, (nick, ))
+            results = cur.fetchall()
+            if results is None:
+                return None
+            else:
+                return results[0][0]
+        except sqlite3.Error as e:
+            if con:
+                con.rollback()
+            log.warning("Error in SQLite processing: %s" % e.args[0])
+
     def insert_in_messages_table(self, timestamp, nick, jid, message):
         try:
             con = sqlite3.connect(self.path)

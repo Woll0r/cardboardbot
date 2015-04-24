@@ -215,7 +215,7 @@ class CardboardCommands:
             return "%s last logged off at %s" % (nick, timestring)
 
     def lastsaid(self, nick):
-        jid = self.db.get_last_message(nick)
+        result = self.db.get_last_message(nick)
 
         if result is None:
             return "I'm sorry, I have never heard %s speak." % nick

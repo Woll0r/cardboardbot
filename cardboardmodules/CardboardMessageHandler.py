@@ -108,6 +108,14 @@ class CardboardMessageHandler:
                 messager.send_message(message)
                 return
 
+            # Last said
+            if messageobject.command == "lastsaid":
+                log.debug("Someone wants to know when a person last spoke!")
+                requested_nick = messageobject.args
+                message = messager.create_message(self.cmd.lastsaid(requested_nick))
+                messager.send_message(message)
+                return
+
             # Tumblr argueing
             if messageobject.command == "argue":
                 log.debug("Someone wants me to argue!")

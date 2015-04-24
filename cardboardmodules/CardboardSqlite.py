@@ -53,13 +53,13 @@ class CardboardDatabase:
         try:
             con = sqlite3.connect(self.path)
             cur = con.cursor()
-            cmd = "SELECT l.timestamp FROM cardboardlog l, cardboardnick n WHERE l.name = n.jid AND UPPER(n.nick) = UPPER(?) ORDER BY l.timestamp DESC LIMIT 1;"
+            cmd = "SELECT l.timestamp, l.message FROM cardboardlog l, cardboardnick n WHERE l.name = n.jid AND UPPER(n.nick) = UPPER(?) ORDER BY l.timestamp DESC LIMIT 1;"
             cur.execute(cmd, (nick, ))
             results = cur.fetchall()
             if results is None or len(results) == 0:
                 return None
             else:
-                return results[0][0]
+                return results[0]
         except sqlite3.Error as e:
             if con:
                 con.rollback()

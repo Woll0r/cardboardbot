@@ -220,6 +220,7 @@ class CardboardCommands:
         if result is None:
             return "I'm sorry, I have never heard %s speak." % nick
         else:
-            timestamp = datetime.datetime.fromtimestamp(result)
+            timestamp = datetime.datetime.fromtimestamp(result[0])
             timestring = timestamp.strftime("%d %b %Y %H:%M:%S")
-            return "%s last said something at %s" % (nick, timestring)
+            message = result[1]
+            return "At %s, %s said \"%s\"" % (timestring, nick, message)

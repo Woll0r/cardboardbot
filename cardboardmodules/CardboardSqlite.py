@@ -40,7 +40,7 @@ class CardboardDatabase:
             cmd = "SELECT timestamp FROM cardboardnick WHERE UPPER(nick) = UPPER(?);"
             cur.execute(cmd, (nick, ))
             results = cur.fetchall()
-            if results is None:
+            if results is None or len(results) == 0:
                 return None
             else:
                 return results[0][0]
@@ -56,7 +56,7 @@ class CardboardDatabase:
             cmd = "SELECT l.timestamp FROM cardboardlog l, cardboardnick n WHERE l.name = n.jid AND UPPER(n.nick) = UPPER(?) ORDER BY l.timestamp DESC LIMIT 1;"
             cur.execute(cmd, (nick, ))
             results = cur.fetchall()
-            if results is None:
+            if results is None or len(results) == 0:
                 return None
             else:
                 return results[0][0]

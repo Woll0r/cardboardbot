@@ -1,0 +1,17 @@
+[Unit]
+Description=CardboardBot Jabber bot
+Wants=network.target
+After=network.target
+
+[Service]
+Type=simple
+User=cardboardbot
+Group=cardboardbot
+Environment=VIRTUALENV=/home/%u/cardboardenv
+Environment=PATH="$VIRTUAL_ENV/bin:$PATH"
+WorkingDirectory=/home/%u/cardboardbot
+ExecStart=$VIRTUAL_ENV/bin/python /home/%u/cardboardbot/cardboardbot.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

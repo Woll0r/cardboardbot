@@ -109,6 +109,9 @@ if __name__ == '__main__':
     xmpp = CardboardBot.CardboardBot(opts.jid, opts.password, opts.nick, opts.channel, opts.use_ipv6, opts.brainfile,
                                      opts.memoriesfile, opts.aimlpath, opts.databasefile)
 
+    # Respond to termination signals properly
+    xmpp.use_signals()
+
     # Connect!
     if xmpp.connect():
         xmpp.process(block=True)

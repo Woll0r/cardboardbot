@@ -7,10 +7,10 @@ After=network.target
 Type=simple
 User=cardboardbot
 Group=cardboardbot
-Environment=VIRTUALENV=/home/%u/cardboardenv
+Environment=VIRTUALENV=/home/cardboardbot/cardboardenv
 Environment=PATH="$VIRTUAL_ENV/bin:$PATH"
-WorkingDirectory=/home/%u/cardboardbot
-ExecStart=$VIRTUAL_ENV/bin/python /home/%u/cardboardbot/cardboardbot.py
+WorkingDirectory=/home/cardboardbot/cardboardbot
+ExecStart=/home/cardboardbot/cardboardenv/bin/python /home/cardboardbot/cardboardbot/cardboardbot.py
 Restart=on-failure
 
 [Install]

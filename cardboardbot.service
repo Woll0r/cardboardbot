@@ -12,7 +12,7 @@ Environment=PATH="$VIRTUAL_ENV/bin:$PATH"
 WorkingDirectory=/home/cardboardbot/cardboardbot
 
 Type=simple
-ExecStartPre=/usr/bin/git pull
+#ExecStartPre=/usr/bin/git pull
 ExecStart=/home/cardboardbot/cardboardenv/bin/python /home/cardboardbot/cardboardbot/cardboardbot.py
 Restart=on-failure
 

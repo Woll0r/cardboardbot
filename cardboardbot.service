@@ -4,12 +4,15 @@ Wants=network.target
 After=network.target
 
 [Service]
-Type=simple
 User=cardboardbot
 Group=cardboardbot
+
 Environment=VIRTUALENV=/home/cardboardbot/cardboardenv
 Environment=PATH="$VIRTUAL_ENV/bin:$PATH"
 WorkingDirectory=/home/cardboardbot/cardboardbot
+
+Type=simple
+ExecStartPre=/usr/bin/git pull
 ExecStart=/home/cardboardbot/cardboardenv/bin/python /home/cardboardbot/cardboardbot/cardboardbot.py
 Restart=on-failure
 

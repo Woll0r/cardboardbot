@@ -90,6 +90,12 @@ class CardboardMessageHandler:
                 messager.send_message(message)
                 return
 
+            # sudo
+            if messageobject.command == "sudo":
+                log.debug("Someone wants to use sudo!")
+                message = messager.create_message(self.cmd.sudo(messageobject))
+                messager.send_message(message)
+
             # ping!
             if messageobject.command == "ping":
                 log.debug("Someone wants to send a ping!")

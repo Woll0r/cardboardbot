@@ -5,6 +5,7 @@ import logging
 import random
 import requests
 import datetime
+from cardboardmodules.CardboardMessage import Message
 
 
 log = logging.getLogger(__name__)
@@ -224,3 +225,9 @@ class CardboardCommands:
             timestring = timestamp.strftime("%d %b %Y %H:%M:%S")
             message = result[1]
             return "At %s, %s said \"%s\"" % (timestring, nick, message)
+
+    def sudo(self, message):
+        if self.get_user_role(message.sendernick) != 'moderator':
+            return 'User %s is not in the sudoers file. This incident will be reported.'
+        else:
+            return 'This command should not be run as root. Please execute this command without sudo.'

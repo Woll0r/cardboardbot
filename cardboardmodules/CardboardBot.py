@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""CardboardBot module that handles general chatbot things"""
+
 import sys
 
 # Python versions before 3.0 do not use UTF-8 encoding
@@ -8,10 +10,8 @@ import sys
 # throughout SleekXMPP, we will set the default encoding
 # ourselves to UTF-8.
 if sys.version_info < (3, 0):
-    reload(sys)
-    sys.setdefaultencoding('utf8')
-else:
-    raw_input = input
+    from sleekxmpp.util.misc_ops import setdefaultencoding
+    setdefaultencoding('utf8')
 
 import logging
 
@@ -29,36 +29,41 @@ log = logging.getLogger(__name__)
 
 
 class CardboardBot(sleekxmpp.ClientXMPP):
+    """CardboardBot class that will handle all client-side XMPP things for the bot"""
+    # pylint: disable=too-many-instance-attributes
+
     # Class constructor
-    def __init__(self, jid, password, nick, channel, use_ipv6, braintype, brainfile, memoriesfile, aimlpath, databasefile):
+    def __init__(self, jid, password, nick, channel, use_ipv6,
+                 brainfile, memoriesfile, aimlpath, databasefile):
+        # pylint: disable=too-many-arguments
         # Set parameters for SleekXMPP
         log.debug("Initiating CardboardBot by setting my own parameters...")
         super(CardboardBot, self).__init__(jid, password)
 
-        # Configure my own parameters
-        self.jid = jid
-        self.password = password
         self.nick = nick
         self.channel = channel
 
-        if not use_ipv6:
-            self.use_ipv6 = False
+        # This is public because for some reason SleekXMPP requires it to be that way
+        self.use_ipv6 = use_ipv6
 
         # Setup AI handler
         if sys.version_info < (3, 0):
-            self.ai = CardboardAlice(brainfile=brainfile, memoriesfile=memoriesfile, aimlpath=aimlpath, nick=self.nick)
+            self._brain = CardboardAlice(brainfile=brainfile, memoriesfile=memoriesfile,
+                                         aimlpath=aimlpath, nick=self.nick)
         else:
             log.warning("Alice requires the aiml module which isn't available on Python 3!")
-            self.ai = CardboardDummyBrain()
+            self._brain = CardboardDummyBrain()
 
         # Setup other handlers
-        self.db = CardboardDatabase(databasefile=databasefile)
-        self.commands = CardboardCommands(db=self.db, connection=self)
-        self.links = CardboardLinks(db=self.db)
-        self.lookup = CardboardLookup(db=self.db, links=self.links)
-        self.messagehandler = CardboardMessageHandler(ai=self.ai, cmd=self.commands, db=self.db, links=self.links, nickname=self.nick,
-                                        lookup=self.lookup, connection=self)
-        self.presencehandler = CardboardPresenceHandler(db=self.db)
+        self._db = CardboardDatabase(databasefile=databasefile)
+        self._commands = CardboardCommands(database=self._db, connection=self)
+        self._links = CardboardLinks(database=self._db)
+        self._lookup = CardboardLookup(links=self._links)
+        self._messagehandler = CardboardMessageHandler(brain=self._brain, cmd=self._commands,
+                                                       database=self._db, links=self._links,
+                                                       nickname=self.nick, lookup=self._lookup,
+                                                       connection=self)
+        self._presencehandler = CardboardPresenceHandler(database=self._db)
 
         self.register_plugin('xep_0030')  # Service Discovery
         self.register_plugin('xep_0004')  # Data Forms
@@ -74,15 +79,19 @@ class CardboardBot(sleekxmpp.ClientXMPP):
 
     # Handle the start event (connection to Jabber)
     def start(self, event):
+        """Bot startup event handler"""
+        # pylint: disable=unused-argument
         log.debug("Connection established, saying hello to the server")
         self.send_presence()
         self.get_roster()
         self.plugin['xep_0045'].joinMUC(self.channel, self.nick, wait=False)
 
     def groupchatmessage(self, event):
+        """Bot groupchat message event handler"""
         log.debug("I got a message! Sending to handler!")
-        self.messagehandler.handler(event)
+        self._messagehandler.handler(event)
 
     def groupchatpresence(self, event):
+        """Bot groupchat presence event handler"""
         log.debug("I got a presence! Sending to handler!")
-        self.presencehandler.handler(event)
+        self._presencehandler.handler(event)

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""CardboardAlice module for all AI involving Alice (AIML) chat routines"""
+
 import logging
 
 # Needed for reading the memories file
@@ -13,7 +15,8 @@ import os.path
 log = logging.getLogger(__name__)
 
 
-class CardboardAlice:
+class CardboardAlice(object):
+    """CardboardAlice class for interacting using Alice (AIML) routines"""
     def __init__(self, brainfile, memoriesfile, aimlpath, nick):
         log.debug("CardboardAlice init")
         # Initialize Alice
@@ -22,9 +25,10 @@ class CardboardAlice:
         self.nick = nick
 
     def brain_start(self, brainfile, memoriesfile, aimlpath):
-        log.debug("CardboardAlice brain_start")
         """Creates the brain file if needed and then loads it.
         Afterwards, the memories will be loaded so the bot gets her identity"""
+        log.debug("CardboardAlice brain_start")
+
         if os.path.isfile(brainfile):
             # Brain is available, load it
             log.info("Found my brain, loading it now!")
@@ -37,8 +41,8 @@ class CardboardAlice:
         log.info("Brain loaded. Now setting all my memories!")
         yamlmemories = open(memoriesfile, 'r')
         memories = yaml.load(yamlmemories)
-        for k, v in list(memories.items()):
-            self.brain.setBotPredicate(k, v)
+        for key, value in list(memories.items()):
+            self.brain.setBotPredicate(key, value)
 
     def response(self, nick, body):
         """Generate a response using Alice AI subroutines"""

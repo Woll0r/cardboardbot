@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""CardboardLookup module for all things related to internet lookups"""
+
 import logging
 import json
 import random
@@ -12,38 +14,42 @@ from cardboardmodules.CardboardMessage import CardboardMessage
 log = logging.getLogger(__name__)
 
 
-class CardboardLookup:
-    def __init__(self, db, links):
+class CardboardLookup(object):
+    """CardboardLookup class for all things related to internet lookups"""
+    # pylint: disable=no-self-use
+    def __init__(self, links):
         log.debug("CardboardLookup init")
-        self.db = db
         self.links = links
         self.messager = CardboardMessage
 
     def fetch_from_url(self, url):
+        """Fetch a page from the internet using the URL"""
         try:
             headers = {
                 'user-agent': 'cardboardbot',
                 'cache-control': 'no-cache'
             }
-            log.debug("Fetching %s from the internet..." % url)
+            log.debug("Fetching %s from the internet...", url)
             res = requests.get(url, headers=headers, timeout=10)
             return res.text
-        except Exception as e:
-            log.warning("Failed to fetch: %s" % str(e))
+        except requests.exceptions.RequestException as ex:
+            log.warning("Failed to fetch: %s", str(ex))
             return None
 
     def retrieve_specific_type(self, data, kind):
-        if type(data) is dict:
-            return self.retrieve_specific_type_from_dict(data, kind)
+        """Retrieve a specific type from a dataset"""
+        if isinstance(data, dict):
+            return self.retrieve_specific_type_dict(data, kind)
 
         results = []
         for list_data in data:
-            for child in self.retrieve_specific_type_from_dict(data, kind):
+            for child in self.retrieve_specific_type_dict(list_data, kind):
                 results.append(child)
 
         return results
 
-    def retrieve_specific_type_from_dict(self, data, kind):
+    def retrieve_specific_type_dict(self, data, kind):
+        """Retrieve a specific type from a dictionary"""
         result = []
 
         if 'data' in data:
@@ -55,6 +61,7 @@ class CardboardLookup:
         return result
 
     def get_link(self, url, sender, timestamp):
+        """Retrieve a random link from a Reddit URL"""
         json_data = self.fetch_from_url(url)
         if json_data is None:
             log.warning("Unable to retrieve json")
@@ -74,6 +81,7 @@ class CardboardLookup:
         return link['url'], link['title'], link['over_18']
 
     def build_message(self, url, title, nsfw):
+        """Build a response with the link"""
         if url is None:
             return 'Could not look up your request :sweetiestare:', None
         plain = '{} [ {} ]'.format(title, url)
@@ -91,15 +99,18 @@ class CardboardLookup:
 
     def clop(self, sender, timestamp):
         """Get a random link from /r/clopclop"""
-        url, title, nsfw = self.get_link("http://reddit.com/r/clopclop.json?count=100", sender, timestamp)
+        url, title, nsfw = self.get_link("http://reddit.com/r/clopclop.json?count=100",
+                                         sender, timestamp)
         return self.build_message(url, title, nsfw)
 
     def pony(self, sender, timestamp):
         """Get a random link from /r/mylittlepony"""
-        url, title, nsfw = self.get_link("http://reddit.com/r/mylittlepony.json?count=100", sender, timestamp)
+        url, title, nsfw = self.get_link("http://reddit.com/r/mylittlepony.json?count=100",
+                                         sender, timestamp)
         return self.build_message(url, title, nsfw)
 
     def ferret(self, sender, timestamp):
         """Get a random ferret"""
-        url, title, nsfw = self.get_link("http://reddit.com/r/ferret.json?count=100", sender, timestamp)
+        url, title, nsfw = self.get_link("http://reddit.com/r/ferret.json?count=100",
+                                         sender, timestamp)
         return self.build_message(url, title, nsfw)

@@ -44,14 +44,9 @@
     </Compile>
     <Compile Include="cardboardmodules\CardboardSqlite.py" />
     <Compile Include="cardboardmodules\__init__.py" />
-    <Compile Include="helpers\cardboardbrain.py" />
-    <Compile Include="helpers\cardboarddomain.py" />
-    <Compile Include="helpers\cardboardlinks.py" />
-    <Compile Include="helpers\cardboardlog.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cardboardmodules" />
-    <Folder Include="helpers" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include=".env\">

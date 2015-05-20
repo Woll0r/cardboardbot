@@ -1,27 +1,34 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""CardboardCommands module for all the chat commands defined in the bot"""
+
 import logging
 import random
 import requests
 import datetime
-from .CardboardMessage import Message
 
 
 log = logging.getLogger(__name__)
 
 
-class CardboardCommands:
-    def __init__(self, db, connection):
+class CardboardCommands(object):
+    """CardboardCommands class for handling all bot commands"""
+
+    # pylint: disable=no-self-use
+
+    def __init__(self, database, connection):
         log.debug("CardboardCommands init")
-        self.db = db
-        self.connection = connection
+        self._db = database
+        self._connection = connection
 
     def get_all_nicks_in_room(self):
-        nicklist = self.connection.plugin['xep_0045'].getRoster(self.connection.channel)
+        """Fetch all the nicknames for people that are currently in the room"""
+        nicklist = self._connection.plugin['xep_0045'].getRoster(self._connection.channel)
         return nicklist
 
     def get_all_jids_in_room(self):
+        """Fetch all the JIDs for people that are currently in the room"""
         nicklist = self.get_all_nicks_in_room()
         jidlist = []
         for nick in nicklist:
@@ -77,35 +84,38 @@ class CardboardCommands:
     def tuch(self, nick, body):
         """Someone does something to me, decide what to do with them"""
         log.debug("Getting actions from database")
-        niceActions = self.db.get_actions(type="nice")
-        sexActions = self.db.get_actions(type="sex")
+        nice_actions = self._db.get_actions(actiontype="nice")
+        sex_actions = self._db.get_actions(actiontype="sex")
 
         if "pets" in body.lower():
-            log.debug("%s is petting me!" % nick)
+            log.debug("%s is petting me!", nick)
             return "/me purrs :sweetiepleased:"
-        if [i for i in niceActions if i in body.lower()]:
-            log.debug("%s is doing nice things to me!" % nick)
+        if [i for i in nice_actions if i in body.lower()]:
+            log.debug("%s is doing nice things to me!", nick)
             return self.goodtuch(nick=nick)
-        if [i for i in sexActions if i in body.lower()]:
-            log.debug("%s is doing sex things to me!" % nick)
+        if [i for i in sex_actions if i in body.lower()]:
+            log.debug("%s is doing sex things to me!", nick)
             return self.sextuch(nick=nick)
         else:
-            log.debug("%s is doing bad things to me!" % nick)
+            log.debug("%s is doing bad things to me!", nick)
             return self.badtuch(nick=nick)
 
     def get_user_affiliation(self, nick):
         """Get a user's affiliation with the room"""
-        useraffiliation = self.connection.plugin['xep_0045'].getJidProperty(self.connection.channel, nick, 'affiliation')
+        useraffiliation = self._connection.plugin['xep_0045'].getJidProperty(
+            self._connection.channel, nick, 'affiliation')
         return useraffiliation
 
     def get_user_jid(self, nick):
         """Get the JID from a user based on their nick"""
-        userjid = self.connection.plugin['xep_0045'].getJidProperty(self.connection.channel, nick, 'jid')
+        userjid = self._connection.plugin['xep_0045'].getJidProperty(self._connection.channel,
+                                                                     nick, 'jid')
         return userjid
 
     def get_user_role(self, nick):
         """Get a user's affiliation with the room"""
-        userrole = self.connection.plugin['xep_0045'].getJidProperty(self.connection.channel, nick, 'role')
+        userrole = self._connection.plugin['xep_0045'].getJidProperty(self._connection.channel,
+                                                                      nick, 'role')
         return userrole
 
     def kick_user(self, nick, sender):
@@ -113,36 +123,34 @@ class CardboardCommands:
         senderrole = self.get_user_role(nick=sender)
         receiverrole = self.get_user_role(nick=nick)
         if senderrole != 'moderator':
-            log.debug("Kick requested by %s failed because they are not a moderator" % sender)
+            log.debug("Kick requested by %s failed because they are not a moderator", sender)
             return "I'm sorry, %s, I can't let you do that. :sweetiestare:" % (sender, )
         if receiverrole is None:
-            log.debug("Kick requested by %s failed because target %s is not in the room" % (sender, nick))
+            log.debug("Kick requested by %s failed because target %s is not in the room",
+                      sender, nick)
             return "I'm sorry, %s, I can't find %s in the room. :sweetiestare:" % (sender, nick)
         if receiverrole == 'moderator':
-            log.debug("Kick requested by %s failed because target %s is a moderator" % (sender, nick))
+            log.debug("Kick requested by %s failed because target %s is a moderator",
+                      sender, nick)
             return "I'm sorry, %s, I can't do that. :sweetiestare:" % (sender, )
-        userjid = self.get_user_jid(nick=nick)
-        log.debug("Attempting to kick %s" % nick)
-        try:
-            kick = self.connection.plugin['xep_0045'].setRole(self.connection.channel, nick=nick, role="none")
-            if kick:
-                log.debug("Kicking of %s successful" % nick)
-                return "%s was kicked. :sweetiestare:" % nick
-            else:
-                log.debug("Kicking of %s failed" % nick)
-                return "I could not kick %s, maybe do it yourself instead? :sweetiestare:" % nick
-        except Exception as e:
-            log.warning("Exception raised while kicking %s!" % nick)
-            log.warning("Exception was: %s" % str(e))
-            pass
+        log.debug("Attempting to kick %s", nick)
+
+        kick = self._connection.plugin['xep_0045'].setRole(self._connection.channel,
+                                                           nick=nick, role="none")
+        if kick:
+            log.debug("Kicking of %s successful", nick)
+            return "%s was kicked. :sweetiestare:" % nick
+        else:
+            log.debug("Kicking of %s failed", nick)
+            return "I could not kick %s, maybe do it yourself instead? :sweetiestare:" % nick
 
     def argue(self):
         """Tumblr-argueing thanks to Nyctef and his TumblrAAS"""
         try:
             res = requests.get('http://tumblraas.azurewebsites.net/', timeout=5)
             return res.text.strip()
-        except requests.RequestException as e:
-            log.warning("Exception while arguing: %s" % str(e))
+        except requests.RequestException as ex:
+            log.warning("Exception while arguing: %s", str(ex))
             return "Huh, what? I zoned out for a moment there."
 
     def rant(self):
@@ -150,8 +158,8 @@ class CardboardCommands:
         try:
             res = requests.get('http://tumblraas.azurewebsites.net/rant', timeout=5)
             return res.text.strip()
-        except requests.RequestException as e:
-            log.warning("Exception while arguing: %s" % str(e))
+        except requests.RequestException as ex:
+            log.warning("Exception while arguing: %s", str(ex))
             return "Huh, what? I zoned out for a moment there."
 
     def ceedee(self):
@@ -159,20 +167,18 @@ class CardboardCommands:
         return random.choice(['c', 'd'])
 
     def roll_dice(self, dice, sides):
-        try:
-            return [random.randint(1, sides) for i in list(range(dice))]
-        except Exception as e:
-            log.warning("Exception in diceroll: %s" % str(e))
-            return []
+        """Perform the actual rolling of the dice"""
+        return [random.randint(1, sides) for i in list(range(dice))] # pylint: disable=unused-variable
 
     def roll(self, message):
         """ Rolls dice, up to 63 dice with 100 sides"""
+        # pylint: disable=too-many-return-statements
         if message.lower() == "out":
             return "/me transforms and rides off :rdsanic:"
         try:
-            dice, sides = list(map(int, message.split('d', 1)))
-            log.debug("Diceroll requested with %s dice and %s sides" % (dice, sides))
-        except:
+            dice, sides = list(int(x) for x in message.split('d', 1))
+            log.debug("Diceroll requested with %s dice and %s sides", dice, sides)
+        except ValueError:
             log.warning("Bad dice!")
             return "Sorry, can't parse your input"
         if dice > 63:
@@ -186,7 +192,7 @@ class CardboardCommands:
         diceroll = self.roll_dice(dice, sides)
         if not diceroll:
             return "Oops, I accidentally dropped my dice"
-        reply = ', '.join(map(str, diceroll))
+        reply = ', '.join(str(x) for x in diceroll)
         if sides == 6:
             # assuming Shadowrun roll
             success = sum(i >= 5 for i in diceroll)
@@ -199,12 +205,13 @@ class CardboardCommands:
         return reply
 
     def seen(self, nick):
+        """Look up when a user last logged off"""
         jid = self.get_user_jid(nick)
-        
+
         if jid:
             return "%s is in the room right now!" % nick
-        
-        result = self.db.get_last_logoff(nick)
+
+        result = self._db.get_last_logoff(nick)
 
         if result is None:
             return "I'm sorry, I have no idea who %s is." % nick
@@ -216,7 +223,8 @@ class CardboardCommands:
             return "%s last logged off at %s" % (nick, timestring)
 
     def lastsaid(self, nick):
-        result = self.db.get_last_message(nick)
+        """Look up when a user last said something"""
+        result = self._db.get_last_message(nick)
 
         if result is None:
             return "I'm sorry, I have never heard %s speak." % nick
@@ -227,7 +235,9 @@ class CardboardCommands:
             return "At %s, %s said \"%s\"" % (timestring, nick, message)
 
     def sudo(self, message):
+        """Execute a command with sudo privileges"""
         if self.get_user_role(message.sendernick) != 'moderator':
             return 'User %s is not in the sudoers file. This incident will be reported.'
         else:
-            return 'This command should not be run as root. Please execute this command without sudo.'
+            return 'This command should not be run as root.' \
+                'Please execute this command without sudo.'

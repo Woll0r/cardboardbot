@@ -26,7 +26,8 @@
     <Content Include="cardboardbot.service" />
     <Content Include="config.py.example" />
     <Content Include="README.md" />
-    <Content Include="requirements.txt" />
+    <Content Include="requirements_python3.txt" />
+    <Content Include="requirements_python2.txt" />
     <Content Include="schema.sql" />
   </ItemGroup>
   <ItemGroup>

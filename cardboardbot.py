@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys  # Systems stuff
+"""CardboardBot, a Jabber chatbot with a bunch of uses"""
+
 import logging  # Logging
 from optparse import OptionParser  # Parse commandline options
 
@@ -106,8 +107,9 @@ if __name__ == '__main__':
             opts.aimlpath = "aiml/std-startup.xml"
 
     # Set up the bot and it's required XMPP things
-    xmpp = CardboardBot.CardboardBot(opts.jid, opts.password, opts.nick, opts.channel, opts.use_ipv6, opts.brainfile,
-                                     opts.memoriesfile, opts.aimlpath, opts.databasefile)
+    xmpp = CardboardBot.CardboardBot(opts.jid, opts.password, opts.nick, opts.channel,
+                                     opts.use_ipv6, opts.brainfile, opts.memoriesfile,
+                                     opts.aimlpath, opts.databasefile)
 
     # Respond to termination signals properly
     xmpp.use_signals()

@@ -5,7 +5,7 @@ import logging
 import random
 import requests
 import datetime
-from cardboardmodules.CardboardMessage import Message
+from .CardboardMessage import Message
 
 
 log = logging.getLogger(__name__)
@@ -160,7 +160,7 @@ class CardboardCommands:
 
     def roll_dice(self, dice, sides):
         try:
-            return [random.randint(1, sides) for i in range(dice)]
+            return [random.randint(1, sides) for i in list(range(dice))]
         except Exception as e:
             log.warning("Exception in diceroll: %s" % str(e))
             return []

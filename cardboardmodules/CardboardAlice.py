@@ -35,9 +35,9 @@ class CardboardAlice:
             self.brain.bootstrap(learnFiles=aimlpath, commands="load aiml b")
             self.brain.saveBrain(brainfile)
         log.info("Brain loaded. Now setting all my memories!")
-        yamlmemories = file(memoriesfile, 'r')
+        yamlmemories = open(memoriesfile, 'r')
         memories = yaml.load(yamlmemories)
-        for k, v in memories.items():
+        for k, v in list(memories.items()):
             self.brain.setBotPredicate(k, v)
 
     def response(self, nick, body):

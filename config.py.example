@@ -1,3 +1,5 @@
+"""CardboardBot configuration file"""
+
 # JID and password. The domain part of the JID is used to detemine the server.
 jid = "someJid@example.com"
 password = "foo-bar"

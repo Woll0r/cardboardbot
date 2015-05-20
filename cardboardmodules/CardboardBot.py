@@ -16,20 +16,21 @@ else:
 import logging
 
 import sleekxmpp  # Jabber library
-from CardboardAlice import CardboardAlice
-from CardboardCommands import CardboardCommands
-from CardboardSqlite import CardboardDatabase
-from CardboardMessageHandler import CardboardMessageHandler
-from CardboardLinks import CardboardLinks
-from CardboardLookup import CardboardLookup
-from CardboardPresenceHandler import CardboardPresenceHandler
+from .CardboardAlice import CardboardAlice
+from .CardboardCommands import CardboardCommands
+from .CardboardSqlite import CardboardDatabase
+from .CardboardMessageHandler import CardboardMessageHandler
+from .CardboardLinks import CardboardLinks
+from .CardboardLookup import CardboardLookup
+from .CardboardPresenceHandler import CardboardPresenceHandler
+from .CardboardDummyBrain import CardboardDummyBrain
 
 log = logging.getLogger(__name__)
 
 
 class CardboardBot(sleekxmpp.ClientXMPP):
     # Class constructor
-    def __init__(self, jid, password, nick, channel, use_ipv6, brainfile, memoriesfile, aimlpath, databasefile):
+    def __init__(self, jid, password, nick, channel, use_ipv6, braintype, brainfile, memoriesfile, aimlpath, databasefile):
         # Set parameters for SleekXMPP
         log.debug("Initiating CardboardBot by setting my own parameters...")
         super(CardboardBot, self).__init__(jid, password)
@@ -43,8 +44,14 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         if not use_ipv6:
             self.use_ipv6 = False
 
-        # Setup handlers
-        self.ai = CardboardAlice(brainfile=brainfile, memoriesfile=memoriesfile, aimlpath=aimlpath, nick=self.nick)
+        # Setup AI handler
+        if sys.version_info < (3, 0):
+            self.ai = CardboardAlice(brainfile=brainfile, memoriesfile=memoriesfile, aimlpath=aimlpath, nick=self.nick)
+        else:
+            log.warning("Alice requires the aiml module which isn't available on Python 3!")
+            self.ai = CardboardDummyBrain()
+
+        # Setup other handlers
         self.db = CardboardDatabase(databasefile=databasefile)
         self.commands = CardboardCommands(db=self.db, connection=self)
         self.links = CardboardLinks(db=self.db)

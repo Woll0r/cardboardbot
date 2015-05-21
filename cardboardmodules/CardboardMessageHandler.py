@@ -38,17 +38,22 @@ class CardboardMessageHandler(object):
 
         # Don't respond to messages without nick
         if not msg["nick"]:
-            return
+            return    
 
         # Don't respond to the MOTD
         if msg["subject"]:
+            return
+
+        userjid = self._cmd.get_user_jid(msg["mucnick"])
+
+        # Don't respond to people without JID
+        if not userjid:
             return
 
         messager = CardboardMessage(connection=self._connection,
                                     default_destination=msg["from"].bare)
 
         timestamp = int(time.time())
-        userjid = self._cmd.get_user_jid(msg["mucnick"])
 
         messageobject = Message(msg["body"], sendernick=msg['mucnick'], sender=userjid.bare,
                                 html=msg["html"] or None, destination=msg["from"].bare,

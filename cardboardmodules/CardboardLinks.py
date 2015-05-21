@@ -93,7 +93,7 @@ class CardboardLinks(object):
             result = json.loads(res.text)
             log.debug(result)
 
-            title = '#' + result['id'] + ' ' + result['tags']
+            title = '#' + str(result['id']) + ' ' + result['tags']
             link = 'https://e621.net/post/show/' + result['id']
 
             self._db.insert_in_link_table(timestamp, sender, link, title, domain)

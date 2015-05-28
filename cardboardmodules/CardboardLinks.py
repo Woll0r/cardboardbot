@@ -52,7 +52,7 @@ class CardboardLinks(object):
             if soup.title is not None:
                 title = soup.title.string.strip()
             else:
-                title = match
+                title = "No title"
             log.debug(title)
             self._db.insert_in_link_table(timestamp, sender, match, title, domain)
             return title

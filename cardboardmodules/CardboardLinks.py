@@ -49,7 +49,10 @@ class CardboardLinks(object):
             # If it is HTML, we fetch the title
             res = requests.get(match, timeout=5, headers=headers)
             soup = BeautifulSoup(res.text)
-            title = soup.title.string.strip()
+            if soup.title is not None:
+                title = soup.title.string.strip()
+            else:
+                title = match
             log.debug(title)
             self._db.insert_in_link_table(timestamp, sender, match, title, domain)
             return title

@@ -38,7 +38,7 @@ class CardboardMessageHandler(object):
 
         # Don't respond to messages without nick
         if not msg["nick"]:
-            return    
+            return
 
         # Don't respond to the MOTD
         if msg["subject"]:

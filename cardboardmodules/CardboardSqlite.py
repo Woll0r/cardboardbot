@@ -108,6 +108,8 @@ class CardboardDatabase(object):
         """Insert a link into the database"""
         # pylint: disable=too-many-arguments
         try:
+            if title is None:
+                title = url
             con = sqlite3.connect(self.path)
             cur = con.cursor()
             cmd = "INSERT INTO cardboardlinks(timestamp, name, url, title, domain) "\

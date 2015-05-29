@@ -25,7 +25,8 @@ class CardboardLinks(object):
 
         try:
             # Set our user-agent
-            headers = {'user-agent': 'cardboardbot'}
+            headers = {'user-agent': 'cardboardbot',
+                       'Accept-Encoding': 'utf-8'}
 
             # Get headers for the content linked
             thing = requests.head(match, timeout=5, headers=headers)
@@ -48,12 +49,15 @@ class CardboardLinks(object):
 
             # If it is HTML, we fetch the title
             res = requests.get(match, timeout=5, headers=headers)
+
+            # UTF-8 MOTHERFUCKER! DO YOU SPEAK IT?
+            res.encoding = 'utf-8'
+
             soup = BeautifulSoup(res.text)
             if soup.title is not None:
                 title = soup.title.string.strip()
             else:
-                title = "No title"
-            log.debug(title)
+                title = None
             self._db.insert_in_link_table(timestamp, sender, match, title, domain)
             return title
         except requests.exceptions.RequestException as ex:

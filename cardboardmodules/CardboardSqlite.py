@@ -42,7 +42,8 @@ class CardboardDatabase(object):
         try:
             con = sqlite3.connect(self.path)
             cur = con.cursor()
-            cmd = "SELECT timestamp FROM cardboardnick WHERE UPPER(nick) = UPPER(?);"
+            cmd = "SELECT timestamp FROM cardboardnick " + \
+                "WHERE UPPER(nick) = UPPER(?);"
             cur.execute(cmd, (nick, ))
             results = cur.fetchall()
             if results is None or len(results) == 0:
@@ -79,7 +80,8 @@ class CardboardDatabase(object):
         try:
             con = sqlite3.connect(self.path)
             cur = con.cursor()
-            cmd = "INSERT INTO cardboardlog(timestamp, name, message) VALUES(?, ?, ?);"
+            cmd = "INSERT INTO cardboardlog(" + \
+                "timestamp, name, message) VALUES(?, ?, ?);"
             if len(nick):
                 cur.execute(cmd, (timestamp, jid, message))
                 log.debug("Written to database!")
@@ -106,7 +108,6 @@ class CardboardDatabase(object):
 
     def insert_in_link_table(self, timestamp, sender, url, title, domain):
         """Insert a link into the database"""
-        # pylint: disable=too-many-arguments
         try:
             if title is None:
                 title = url
@@ -135,7 +136,8 @@ class CardboardDatabase(object):
             namecheck = cur.fetchone()
             if namecheck is None:
                 log.debug("Name doesn't exist")
-                cmd = "INSERT INTO cardboardnick(jid, nick, timestamp) VALUES(?, ?, ?);"
+                cmd = "INSERT INTO cardboardnick(" +\
+                    "jid, nick, timestamp) VALUES(?, ?, ?);"
                 cur.execute(cmd, (jid, nick, timestamp))
                 logging.debug("Name not found in database, inserted!")
             else:

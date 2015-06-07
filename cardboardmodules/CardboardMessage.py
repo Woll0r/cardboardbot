@@ -17,9 +17,9 @@ def to_html(plain):
 
 class Message(object):
     """Message class for having a single object containing messages"""
-    # pylint: disable=too-many-instance-attributes,too-many-arguments,no-self-use
 
-    def __init__(self, plain, destination, html=None, sender=None, sendernick=None, nick=None):
+    def __init__(self, plain, destination, html=None,
+                 sender=None, sendernick=None, nick=None):
         log.debug("Message init")
         self.plain = plain
         self.html = html or to_html(plain)
@@ -41,7 +41,7 @@ class Message(object):
             command, args = stripped, ''
 
         command = command.lower()
-        #args = args.lower()
+        # args = args.lower()
 
         return command, args
 

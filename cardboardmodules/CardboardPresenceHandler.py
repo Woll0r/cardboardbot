@@ -11,7 +11,6 @@ log = logging.getLogger(__name__)
 
 class CardboardPresenceHandler(object):
     """CardboardPresenceHandler class for handling presence in a group chat"""
-    # pylint: disable=too-few-public-methods
     def __init__(self, database):
         log.debug("CardboardPresenceHandler init")
         self._db = database

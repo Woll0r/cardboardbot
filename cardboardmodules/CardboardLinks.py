@@ -28,7 +28,8 @@ class CardboardLinks(object):
                        'Accept-Encoding': 'utf-8'}
 
             # Get headers for the content linked
-            thing = requests.head(match, timeout=5, headers=headers)
+            thing = requests.head(match, timeout=5, headers=headers,
+                                  allow_redirects=True)
 
             domain = urlparse.urlparse(match).hostname.split(".")
             domain = ".".join(len(domain[-2]) < 4
@@ -49,7 +50,8 @@ class CardboardLinks(object):
                 return None
 
             # If it is HTML, we fetch the title
-            res = requests.get(match, timeout=5, headers=headers)
+            res = requests.get(match, timeout=5, headers=headers,
+                               allow_redirects=True)
 
             # UTF-8 MOTHERFUCKER! DO YOU SPEAK IT?
             res.encoding = 'utf-8'

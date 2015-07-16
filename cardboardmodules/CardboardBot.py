@@ -24,6 +24,7 @@ from .CardboardLinks import CardboardLinks
 from .CardboardLookup import CardboardLookup
 from .CardboardPresenceHandler import CardboardPresenceHandler
 from .CardboardDummyBrain import CardboardDummyBrain
+from .CardboardIq import CardboardIq
 
 log = logging.getLogger(__name__)
 
@@ -68,6 +69,7 @@ class CardboardBot(sleekxmpp.ClientXMPP):
                                                        lookup=self._lookup,
                                                        connection=self)
         self._presencehandler = CardboardPresenceHandler(database=self._db)
+        self._iq = CardboardIq(connection=self)
 
         self.register_plugin('xep_0030')  # Service Discovery
         self.register_plugin('xep_0004')  # Data Forms
@@ -98,3 +100,6 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         """Bot groupchat presence event handler"""
         log.debug("I got a presence! Sending to handler!")
         self._presencehandler.handler(event)
+
+    def create_iq(self, id, ifrom, itype, iquery):
+        self.make_iq(id = id, ifrom = ifrom, ito = self.channel, itype = itype, iquery = iquery)

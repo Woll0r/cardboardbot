@@ -36,6 +36,9 @@
     <Compile Include="cardboardmodules\CardboardBot.py" />
     <Compile Include="cardboardmodules\CardboardCommands.py" />
     <Compile Include="cardboardmodules\CardboardDummyBrain.py" />
+    <Compile Include="cardboardmodules\CardboardIq.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="cardboardmodules\CardboardMessageHandler.py" />
     <Compile Include="cardboardmodules\CardboardLinks.py" />
     <Compile Include="cardboardmodules\CardboardLookup.py" />

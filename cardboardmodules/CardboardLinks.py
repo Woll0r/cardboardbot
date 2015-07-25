@@ -77,7 +77,11 @@ class CardboardLinks(object):
 
         try:
             headers = {'user-agent': 'cardboardbot'}
-            res = requests.get(url, timeout=5, headers=headers)
+            res = requests.get(url, timeout=5, headers=headers,
+                               allow_redirects=True)
+
+            if res.status_code != 200:
+                return "Link returned a bad HTTP status code :sweetieoops:"
 
             domain = urlparse.urlparse(url).hostname.split(".")
             domain = ".".join(len(domain[-2]) < 4
@@ -102,7 +106,11 @@ class CardboardLinks(object):
 
         try:
             headers = {'user-agent': 'cardboardbot'}
-            res = requests.get(url, timeout=5, headers=headers)
+            res = requests.get(url, timeout=5, headers=headers,
+                               allow_redirects=True)
+
+            if thing.status_code != 200:
+                return "Link returned a bad HTTP status code :sweetieoops:"
 
             domain = urlparse.urlparse(url).hostname.split(".")
             domain = ".".join(len(domain[-2]) < 4

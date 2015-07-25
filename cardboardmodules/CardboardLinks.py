@@ -31,6 +31,9 @@ class CardboardLinks(object):
             thing = requests.head(match, timeout=5, headers=headers,
                                   allow_redirects=True)
 
+            if thing.status_code != 200:
+                return "Link returned a bad HTTP status code :sweetieoops:"
+
             domain = urlparse.urlparse(match).hostname.split(".")
             domain = ".".join(len(domain[-2]) < 4
                               and domain[-3:] or domain[-2:])

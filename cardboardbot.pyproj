@@ -32,6 +32,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="cardboardbot.py" />
+    <Compile Include="cardboardmarkovgenerator.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="cardboardmodules\CardboardAlice.py" />
     <Compile Include="cardboardmodules\CardboardBot.py" />
     <Compile Include="cardboardmodules\CardboardCommands.py" />

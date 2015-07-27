@@ -19,3 +19,5 @@ databasefile = "cardboardlog.db"
 brainfile = "cardboardbrain.brn"
 memoriesfile = "cardboardmemories.yml"
 aimlpath = "aiml/std-startup.xml"
+
+markovbrainfile = "cardboardmarkov.brn"

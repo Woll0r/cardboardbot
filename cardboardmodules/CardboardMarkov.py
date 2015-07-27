@@ -12,7 +12,7 @@ class CardboardMarkov():
     def __init__(self, markovdb):
         log.debug("CardboardMarkov init")
         mc = MarkovChain(markovdb)
-    
+
     def response(self, nick, body):
         """Respond to a message"""
 

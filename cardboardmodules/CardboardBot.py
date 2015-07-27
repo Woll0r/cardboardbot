@@ -102,4 +102,5 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         self._presencehandler.handler(event)
 
     def create_iq(self, id, ifrom, itype, iquery):
-        self.make_iq(id = id, ifrom = ifrom, ito = self.channel, itype = itype, iquery = iquery)
+        self.make_iq(id=id, ifrom=ifrom, ito=self.channel,
+                     itype=itype, iquery=iquery)

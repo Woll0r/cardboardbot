@@ -38,7 +38,7 @@ def main():
 
     mc = MarkovChain(opts.database)
 
-    mc.learnFromFile(opts.file)
+    mc.generateDatabase(opts.file)
 
 if __name__ == "__main__":
     main()

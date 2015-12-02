@@ -15,10 +15,14 @@ log = logging.getLogger(__name__)
 class CardboardCommands(object):
     """CardboardCommands class for handling all bot commands"""
 
-    def __init__(self, database, connection):
+    def __init__(self, database, connection, iq):
         log.debug("CardboardCommands init")
         self._db = database
         self._connection = connection
+        self._iq = iq
+
+    ###########################################################################
+    # Nickname specific commands
 
     def get_all_nicks_in_room(self):
         """Fetch all the nicknames for people that are currently in the room"""
@@ -34,6 +38,9 @@ class CardboardCommands(object):
             jid = self.get_user_jid(nick=nick)
             jidlist.append(jid.bare)
         return jidlist
+    
+    ###########################################################################
+    # Touches
 
     def goodtuch(self, nick):
         """Someone touches the bot in a nice way"""
@@ -99,6 +106,9 @@ class CardboardCommands(object):
             log.debug("%s is doing bad things to me!", nick)
             return self.badtuch(nick=nick)
 
+    ###########################################################################
+    # User affiliation commands (kick, ban, unban, moderator status, etc)
+
     def get_user_affiliation(self, nick):
         """Get a user's affiliation with the room"""
         useraffiliation = self._connection.plugin['xep_0045'].getJidProperty(
@@ -150,6 +160,12 @@ class CardboardCommands(object):
             return "I could not kick %s, " + \
                    "maybe do it yourself instead? :sweetiestare:" % nick
 
+    def banlist(self):
+        return self._iq.banlist()
+
+    ###########################################################################
+    # Tumblr as a service commands
+     
     def argue(self):
         """Tumblr-argueing thanks to Nyctef and his TumblrAAS"""
         try:
@@ -170,10 +186,16 @@ class CardboardCommands(object):
             log.warning("Exception while arguing: %s", str(ex))
             return "Huh, what? I zoned out for a moment there."
 
+    ###########################################################################
+    # Confirm or deny
+    
     def ceedee(self):
         """Confirm or deny"""
         return random.choice(['c', 'd'])
 
+    ###########################################################################
+    # Dice roller
+    
     def roll_dice(self, dice, sides):
         """Perform the actual rolling of the dice"""
         return [random.randint(1, sides) for i in list(range(dice))]
@@ -212,6 +234,9 @@ class CardboardCommands(object):
                     reply = reply + " glitched"
         return reply
 
+    ###########################################################################
+    # Last seen/last said command
+
     def seen(self, nick):
         """Look up when a user last logged off"""
         jid = self.get_user_jid(nick)
@@ -242,6 +267,9 @@ class CardboardCommands(object):
             message = result[1]
             return "At %s, %s said \"%s\"" % (timestring, nick, message)
 
+    ###########################################################################
+    # Sudo
+    
     def sudo(self, message):
         """Execute a command with sudo privileges"""
         if self.get_user_role(message.sendernick) != 'moderator':
@@ -250,3 +278,4 @@ class CardboardCommands(object):
         else:
             return 'This command should not be run as root.' \
                 'Please execute this command without sudo.'
+    

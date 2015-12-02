@@ -109,6 +109,13 @@ class CardboardMessageHandler(object):
                         (messageobject.args, ))
                 messager.send_message(message)
                 return
+            
+            if messageobject.command == "banlist":
+                log.debug("Someone wants to get the banlist")
+                result = self._cmd.banlist()
+                message = messager.create_message(result)
+                messager.send_message(message)
+                return
 
             # sudo
             if messageobject.command == "sudo":

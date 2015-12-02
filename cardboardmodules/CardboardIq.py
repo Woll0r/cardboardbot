@@ -23,3 +23,13 @@ class CardboardIq():
         iq = self.connection.create_iq('banlist', 'get', root_element)
 
         response = iq.send()
+        items = response.findall('.//{' + self.muc_namespace + '}item')
+        log.debug("Banlist contents: " + str(items))
+        
+        res = ""
+        for item in items:
+            if item.get('jid') is not None:
+                res += item.get('jid') + ": " + str(item[0].text)
+        
+        if not res: return "No bans on record!"
+        return res

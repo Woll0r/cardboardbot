@@ -58,7 +58,6 @@ class CardboardBot(sleekxmpp.ClientXMPP):
 
         # Setup other handlers
         self._db = CardboardDatabase(databasefile=databasefile)
-        self._commands = CardboardCommands(database=self._db, connection=self)
         self._links = CardboardLinks(database=self._db)
         self._lookup = CardboardLookup(links=self._links)
         self._messagehandler = CardboardMessageHandler(brain=self._brain,
@@ -70,6 +69,7 @@ class CardboardBot(sleekxmpp.ClientXMPP):
                                                        connection=self)
         self._presencehandler = CardboardPresenceHandler(database=self._db)
         self._iq = CardboardIq(connection=self)
+        self._commands = CardboardCommands(database=self._db, connection=self, iq = self._iq)
 
         self.register_plugin('xep_0030')  # Service Discovery
         self.register_plugin('xep_0004')  # Data Forms

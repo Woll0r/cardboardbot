@@ -41,6 +41,7 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         super(CardboardBot, self).__init__(jid, password)
 
         self.nick = nick
+        self.jid = jid
         self.channel = channel
 
         # This is public because for some reason
@@ -101,6 +102,8 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         log.debug("I got a presence! Sending to handler!")
         self._presencehandler.handler(event)
 
-    def create_iq(self, id, ifrom, itype, iquery):
-        self.make_iq(id=id, ifrom=ifrom, ito=self.channel,
-                     itype=itype, iquery=iquery)
+    def create_iq(self, id, ifrom, itype, payload):
+        iq = self.make_iq(id=id, ifrom=ifrom, ito=self.channel,
+                     itype=itype)
+        iq.set_payload(xml)
+        return iq

@@ -2,7 +2,7 @@
 
 import logging
 import sleekxmpp
-import xml.etree.ElementTree
+import xml.etree.ElementTree as ETree
 
 
 log = logging.getLogger(__name__)
@@ -17,10 +17,12 @@ class CardboardIq():
         self.connection = connection
 
     def banlist(self):
-        root_element = ElementTree.Element('{' + self.muc_namespace + '}query')
-        item = ElementTree.SubElement(root_element, 'item')
+        root_element = ETree.Element('{' + self.muc_namespace + '}query')
+        item = ETree.SubElement(root_element, 'item')
         item.set('affiliation', 'outcast')
-        iq = self.connection.create_iq('banlist', 'get', root_element)
+        iq = self.connection.create_iq(id='banlist', itype='get', 
+                                       ifrom=self.connection.jid,
+                                       xml=root_element)
 
         response = iq.send()
         items = response.findall('.//{' + self.muc_namespace + '}item')

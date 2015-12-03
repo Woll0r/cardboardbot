@@ -38,6 +38,24 @@ class CardboardCommands(object):
             jid = self.get_user_jid(nick=nick)
             jidlist.append(jid.bare)
         return jidlist
+
+    def get_user_affiliation(self, nick):
+        """Get a user's affiliation with the room"""
+        useraffiliation = self._connection.plugin['xep_0045'].getJidProperty(
+            self._connection.channel, nick, 'affiliation')
+        return useraffiliation
+
+    def get_user_jid(self, nick):
+        """Get the JID from a user based on their nick"""
+        userjid = self._connection.plugin['xep_0045'].getJidProperty(
+            self._connection.channel, nick, 'jid')
+        return userjid
+
+    def get_user_role(self, nick):
+        """Get a user's affiliation with the room"""
+        userrole = self._connection.plugin['xep_0045'].getJidProperty(
+            self._connection.channel, nick, 'role')
+        return userrole
     
     ###########################################################################
     # Touches
@@ -109,24 +127,6 @@ class CardboardCommands(object):
     ###########################################################################
     # User affiliation commands (kick, ban, unban, moderator status, etc)
 
-    def get_user_affiliation(self, nick):
-        """Get a user's affiliation with the room"""
-        useraffiliation = self._connection.plugin['xep_0045'].getJidProperty(
-            self._connection.channel, nick, 'affiliation')
-        return useraffiliation
-
-    def get_user_jid(self, nick):
-        """Get the JID from a user based on their nick"""
-        userjid = self._connection.plugin['xep_0045'].getJidProperty(
-            self._connection.channel, nick, 'jid')
-        return userjid
-
-    def get_user_role(self, nick):
-        """Get a user's affiliation with the room"""
-        userrole = self._connection.plugin['xep_0045'].getJidProperty(
-            self._connection.channel, nick, 'role')
-        return userrole
-
     def kick_user(self, nick, sender):
         """Kick a user from the room"""
         senderrole = self.get_user_role(nick=sender)
@@ -162,6 +162,57 @@ class CardboardCommands(object):
 
     def banlist(self):
         return self._iq.banlist()
+
+    def ban_user(self, nick, sender, reason):
+        senderrole = self.get_user_role(nick=sender)
+        receiverrole = self.get_user_role(nick=nick)
+        if senderrole != 'moderator':
+            log.debug("Ban requested by %s " +
+                      "failed because they are not a moderator", sender)
+            return "I'm sorry, %s, but I can't let " + \
+                "you do that. :sweetiestare:" % (sender, )
+        if receiverrole is None:
+            log.debug("Ban requested by %s " +
+                      "failed because target %s is not in the room",
+                      sender, nick)
+            return "I'm sorry, %s, I can't find %s " + \
+                   "in the room. :sweetiestare:" % (sender, nick)
+        if receiverrole == 'moderator':
+            log.debug("Ban requested by %s " +
+                      "failed because target %s is a moderator",
+                      sender, nick)
+            return "I'm sorry, %s, I can't do that. " + \
+                ":sweetiestare:" % (sender, )
+        log.debug("Attempting to ban %s", nick)
+        
+        jid = self.get_user_jid(nick)
+        
+        self.ban_user_jid(jid, sender, reason)        
+
+    def ban_user_jid(self, jid, sender, reason):
+        senderrole = self.get_user_role(nick=sender)
+        if senderrole != 'moderator':
+            log.debug("Ban requested by %s " +
+                      "failed because they are not a moderator", sender)
+            return "I'm sorry, %s, but I can't let " + \
+                "you do that. :sweetiestare:" % (sender, )
+        log.debug("Attempting to ban %s", jid)
+        
+        self.connection.plugin['xep_0045'].setAffiliation(
+            self._connection.channel, jid=jid, affiliation="outcast", ifrom=self.connection.jid)        
+
+    def unban_user_jid(self, jid, sender):
+        senderrole = self.get_user_role(nick=sender)
+        if senderrole != 'moderator':
+            log.debug("Unban requested by %s " +
+                      "failed because they are not a moderator", sender)
+            return "I'm sorry, %s, but I can't let " + \
+                "you do that. :sweetiestare:" % (sender, )
+        log.debug("Attempting to ban %s", jid)
+        
+        self.connection.plugin['xep_0045'].setAffiliation(
+            self._connection.channel, jid=jid, affiliation="none", ifrom=self.connection.jid)        
+
 
     ###########################################################################
     # Tumblr as a service commands

@@ -176,7 +176,7 @@ class CardboardCommands(object):
                       "failed because target %s is not in the room",
                       sender, nick)
             return "I'm sorry, %s, I can't find %s " + \
-                   "in the room. :sweetiestare:" % (sender, nick)
+                   "in the room. :sweetiestare:" % (nick, )
         if receiverrole == 'moderator':
             log.debug("Ban requested by %s " +
                       "failed because target %s is a moderator",

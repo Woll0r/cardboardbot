@@ -187,7 +187,7 @@ class CardboardCommands(object):
         
         jid = self.get_user_jid(nick)
         
-        self.ban_user_jid(jid, sender, reason)        
+        return self.ban_user_jid(jid, sender, reason)        
 
     def ban_user_jid(self, jid, sender, reason):
         senderrole = self.get_user_role(nick=sender)
@@ -198,8 +198,12 @@ class CardboardCommands(object):
                 "you do that. :sweetiestare:" % (sender, )
         log.debug("Attempting to ban %s", jid)
         
-        self.connection.plugin['xep_0045'].setAffiliation(
-            self._connection.channel, jid=jid, affiliation="outcast", ifrom=self.connection.jid)        
+        res = self._iq.ban(jid, reason)
+        
+        if res:
+            return "Okay, done!"
+        else:
+            return "Nope, sorry, no can do!"
 
     def unban_user_jid(self, jid, sender):
         senderrole = self.get_user_role(nick=sender)

@@ -109,6 +109,32 @@ class CardboardMessageHandler(object):
                         (messageobject.args, ))
                 messager.send_message(message)
                 return
+
+            if messageobject.command == "ban":
+                log.debug("Someone wants to ban")
+                nick = None
+                reason = None
+                match = re.match("\s*'([^']*)'(.*)", messageobject.args) or\
+                    re.match("\s*\"([^\"]*)\"(.*)", messageobject.args) or\
+                    re.match("\s*(\S*)(.*)", messageobject.args)
+                if match:
+                    nick = match.group(1)
+                    reason = match.group(2).strip()
+                result = self._cmd.ban_user(nick, messageobject.sendernick,
+                                            reason)
+                message = messager.create_message(result)
+                messager.send_message(message)
+                return
+                
+            if messageobject.command == "banjid":
+                log.debug("Someone wants to ban by jid")
+                jid = args.split(' ', 1)[0]
+                reason = args.split(' ', 1)[1]
+                result = self._cmd.ban_user_jid(jid, messageobject.sendernick,
+                                                reason)
+                message = messager.create_message(result)
+                messager.send_message(message)
+                return
             
             if messageobject.command == "banlist":
                 log.debug("Someone wants to get the banlist")

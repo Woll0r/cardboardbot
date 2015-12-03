@@ -47,3 +47,29 @@ class CardboardIq():
         except IqTimeout as iqt:
             log.warning('IqTimeout happened!')
             return iqt.text
+
+    def ban(self, jid, reason=None):
+        ET.register_namespace('', self.muc_namespace)
+        
+        root_element = ET.element('{' + self.muc_namespace + '}query')
+        item = ET.SubElement(root_element, 'item')
+        item.set('affiliation', 'outcast')
+        item.set('jid', jid)
+        if Reason is not None:
+            reasonelement = ET.SubElement(item, 'reason')
+            reasonelement.text = reason
+        
+        iq = self.connection.create_iq(id='ban', itype='set',
+                                       payload=root_element,
+                                       namespace=self.muc_namespace)
+
+        try:
+            response = iq.send()
+            log.debug('Ban success')
+            return True
+        except IqError as iqe:
+            log.warning('IqError happened! Error: ' + iqe.text)
+            return False
+        except IqTimeout as iqt:
+            log.warning('IqTimeout happened!')
+            return False

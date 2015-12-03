@@ -5,6 +5,7 @@
 
 import logging
 import time
+import re
 
 from cardboardmodules.CardboardMessage import CardboardMessage, Message
 

@@ -2,7 +2,7 @@
 
 import logging
 import sleekxmpp
-import xml.etree.ElementTree as ETree
+import xml.etree.cElementTree as ET
 
 
 log = logging.getLogger(__name__)
@@ -17,21 +17,33 @@ class CardboardIq():
         self.connection = connection
 
     def banlist(self):
-        root_element = ETree.Element('{' + self.muc_namespace + '}query')
-        item = ETree.SubElement(root_element, 'item')
+        # Register namespace to an empty prefix
+        ET.register_namespace('', self.muc_namespace)
+        
+        # Create the query elements
+        root_element = ET.Element('{' + self.muc_namespace + '}query')
+        item = ET.SubElement(root_element, 'item')
         item.set('affiliation', 'outcast')
-        iq = self.connection.create_iq(id='banlist', itype='get', 
-                                       ifrom=self.connection.jid,
-                                       xml=root_element)
+        
+        # Create IQ stanza
+        iq = self.connection.create_iq(id='banlist', itype='get',
+                                       payload=root_element,
+                                       namespace=self.muc_namespace)
 
-        response = iq.send()
-        items = response.findall('.//{' + self.muc_namespace + '}item')
-        log.debug("Banlist contents: " + str(items))
-        
-        res = ""
-        for item in items:
-            if item.get('jid') is not None:
-                res += item.get('jid') + ": " + str(item[0].text)
-        
-        if not res: return "No bans on record!"
-        return res
+        # Get response and find elements inside
+        try:
+            response = iq.send()
+            items = response.findall('.//{' + self.muc_namespace + '}item')
+            log.debug("Banlist contents: " + str(items))
+            
+            res = ""
+            for item in items:
+                if item.get('jid') is not None:
+                    res += "\n" + item.get('jid') + ": " + str(item[0].text)
+            return res
+        except IqError as iqe:
+            log.warning('IqError happened! Error: ' + iqe.text)
+            return iqe.text
+        except IqTimeout as iqt:
+            log.warning('IqTimeout happened!')
+            return iqt.text

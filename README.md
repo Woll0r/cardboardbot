@@ -4,15 +4,17 @@ A Jabber chatbot with a bunch of uses
 
 ## Requirements
 
-Requires Python 2.7 and will not run with Python 3 because some of the modules
-used don't work with Python 3.
+Might work with Python 3, but has only been tested with Python 2.7
 
-You can install the required Python packages with a simple
-`pip install -r requirements.txt`
+You can install the required Python 2.7 packages with a simple
+`pip install -r requirements_python2.txt`
 
-You will also need an AIML library for the bot to use. I personally used the
+There's also a list of Python 3 requirements you can install with
+`pip install -r requirements_python3.txt`
+
+You will also need an AIML library for the bot to use, at least in Python 2.7. I personally used the
 [A.L.I.C.E. AIML set](https://code.google.com/p/aiml-en-us-foundation-alice/)
-which works nicely.
+which works nicely. This isn't needed for Python 3.
 
 ## Usage
 

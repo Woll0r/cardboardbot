@@ -129,10 +129,23 @@ class CardboardMessageHandler(object):
                 
             if messageobject.command == "banjid":
                 log.debug("Someone wants to ban by jid")
-                jid = args.split(' ', 1)[0]
-                reason = args.split(' ', 1)[1]
+                splitted = messageobject.args.split(' ', 1)
+                jid = splitted[0]
+                reason = None
+                try:
+                    reason = splitted[1]
+                except IndexError:
+                    log.debug("No reason given")
+                    pass
                 result = self._cmd.ban_user_jid(jid, messageobject.sendernick,
                                                 reason)
+                message = messager.create_message(result)
+                messager.send_message(message)
+                return
+            
+            if messageobject.command == "unban":
+                log.debug("Someone wants to unban")
+                result = self._cmd.unban_user_jid(messageobject.args, messageobject.sendernick)
                 message = messager.create_message(result)
                 messager.send_message(message)
                 return

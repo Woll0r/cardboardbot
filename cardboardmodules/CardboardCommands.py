@@ -134,20 +134,15 @@ class CardboardCommands(object):
         if senderrole != 'moderator':
             log.debug("Kick requested by %s " +
                       "failed because they are not a moderator", sender)
-            return "I'm sorry, %s, I can't let " + \
-                "you do that. :sweetiestare:" % (sender, )
+            return "Nope."
         if receiverrole is None:
             log.debug("Kick requested by %s " +
                       "failed because target %s is not in the room",
                       sender, nick)
-            return "I'm sorry, %s, I can't find %s " + \
-                   "in the room. :sweetiestare:" % (sender, nick)
+            return "Nope"
         if receiverrole == 'moderator':
-            log.debug("Kick requested by %s " +
-                      "failed because target %s is a moderator",
-                      sender, nick)
-            return "I'm sorry, %s, I can't do that. " + \
-                ":sweetiestare:" % (sender, )
+            log.debug("Kick requested by %s failed because target %s is a moderator", sender, nick)
+            return "Nope."
         log.debug("Attempting to kick %s", nick)
 
         kick = self._connection.plugin['xep_0045'].setRole(
@@ -157,8 +152,7 @@ class CardboardCommands(object):
             return "%s was kicked. :sweetiestare:" % nick
         else:
             log.debug("Kicking of %s failed", nick)
-            return "I could not kick %s, " + \
-                   "maybe do it yourself instead? :sweetiestare:" % nick
+            return "Something went wrong."
 
     def banlist(self):
         return self._iq.banlist()
@@ -169,23 +163,21 @@ class CardboardCommands(object):
         if senderrole != 'moderator':
             log.debug("Ban requested by %s " +
                       "failed because they are not a moderator", sender)
-            return "I'm sorry, %s, but I can't let " + \
-                "you do that. :sweetiestare:" % (sender, )
+            return "Nope."
         if receiverrole is None:
             log.debug("Ban requested by %s " +
                       "failed because target %s is not in the room",
                       sender, nick)
-            return "I'm sorry, %s, I can't find %s " + \
-                   "in the room. :sweetiestare:" % (nick, )
+            return "Nope."
         if receiverrole == 'moderator':
             log.debug("Ban requested by %s " +
                       "failed because target %s is a moderator",
                       sender, nick)
-            return "I'm sorry, %s, I can't do that. " + \
-                ":sweetiestare:" % (sender, )
+            return "Nope."
         log.debug("Attempting to ban %s", nick)
         
         jid = self.get_user_jid(nick)
+        jid = jid.bare
         
         return self.ban_user_jid(jid, sender, reason)        
 
@@ -194,8 +186,7 @@ class CardboardCommands(object):
         if senderrole != 'moderator':
             log.debug("Ban requested by %s " +
                       "failed because they are not a moderator", sender)
-            return "I'm sorry, %s, but I can't let " + \
-                "you do that. :sweetiestare:" % (sender, )
+            return "Nope."
         log.debug("Attempting to ban %s", jid)
         
         res = self._iq.ban(jid, reason)
@@ -210,13 +201,16 @@ class CardboardCommands(object):
         if senderrole != 'moderator':
             log.debug("Unban requested by %s " +
                       "failed because they are not a moderator", sender)
-            return "I'm sorry, %s, but I can't let " + \
-                "you do that. :sweetiestare:" % (sender, )
+            return "Nope."
         log.debug("Attempting to ban %s", jid)
         
-        self.connection.plugin['xep_0045'].setAffiliation(
-            self._connection.channel, jid=jid, affiliation="none", ifrom=self.connection.jid)        
+        res = self._connection.plugin['xep_0045'].setAffiliation(
+            self._connection.channel, jid=jid, affiliation="none", ifrom=self._connection.jid)        
 
+        if res:
+            return "Okay, done"
+        else:
+            return "Nope."
 
     ###########################################################################
     # Tumblr as a service commands

@@ -3,6 +3,7 @@
 import logging
 import sleekxmpp
 import xml.etree.cElementTree as ET
+from sleekxmpp.exceptions import IqTimeout, IqError
 
 
 log = logging.getLogger(__name__)
@@ -51,11 +52,11 @@ class CardboardIq():
     def ban(self, jid, reason=None):
         ET.register_namespace('', self.muc_namespace)
         
-        root_element = ET.element('{' + self.muc_namespace + '}query')
+        root_element = ET.Element('{' + self.muc_namespace + '}query')
         item = ET.SubElement(root_element, 'item')
         item.set('affiliation', 'outcast')
         item.set('jid', jid)
-        if Reason is not None:
+        if reason is not None:
             reasonelement = ET.SubElement(item, 'reason')
             reasonelement.text = reason
         

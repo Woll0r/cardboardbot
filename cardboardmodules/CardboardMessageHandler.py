@@ -157,6 +157,13 @@ class CardboardMessageHandler(object):
                 messager.send_message(message)
                 return
 
+            # detavi
+            if messageobject.command == "detavi":
+                log.debug("Someone wants to detavi!")
+                result = self._cmd.kick_user("Octavia", messageobject.sendernick)
+                message = messager.create_message(result)
+                messager.send_message(message)
+
             # sudo
             if messageobject.command == "sudo":
                 log.debug("Someone wants to use sudo!")

@@ -48,6 +48,10 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         # SleekXMPP requires it to be that way
         self.use_ipv6 = use_ipv6
 
+        # Tell SleekXMPP to use message IDs to prevent certain broken-ness in
+        # how Xabber deals with messages
+        self.use_message_ids = True
+
         # Setup AI handler
         if sys.version_info < (3, 0):
             self._brain = CardboardAlice(brainfile=brainfile,

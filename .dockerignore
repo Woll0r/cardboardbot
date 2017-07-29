@@ -1,0 +1,9 @@
+.gitattributes
+.gitignore
+Dockerfile
+cardboardbot.service
+*.example
+*.md
+*.log
+.git
+.vscode

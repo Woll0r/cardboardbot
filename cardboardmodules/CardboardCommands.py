@@ -3,10 +3,11 @@
 
 """CardboardCommands module for all the chat commands defined in the bot"""
 
+import datetime
 import logging
 import random
+
 import requests
-import datetime
 
 
 log = logging.getLogger(__name__)
@@ -56,7 +57,7 @@ class CardboardCommands(object):
         userrole = self._connection.plugin['xep_0045'].getJidProperty(
             self._connection.channel, nick, 'role')
         return userrole
-    
+
     ###########################################################################
     # Touches
 
@@ -155,9 +156,11 @@ class CardboardCommands(object):
             return "Something went wrong."
 
     def banlist(self):
+        """Return the list of banned users"""
         return self._iq.banlist()
 
     def ban_user(self, nick, sender, reason):
+        """Ban a user from the channel"""
         senderrole = self.get_user_role(nick=sender)
         receiverrole = self.get_user_role(nick=nick)
         if senderrole != 'moderator':
@@ -175,37 +178,39 @@ class CardboardCommands(object):
                       sender, nick)
             return "Nope."
         log.debug("Attempting to ban %s", nick)
-        
+
         jid = self.get_user_jid(nick)
         jid = jid.bare
-        
-        return self.ban_user_jid(jid, sender, reason)        
+
+        return self.ban_user_jid(jid, sender, reason)
 
     def ban_user_jid(self, jid, sender, reason):
+        """Ban a user from the channel by JID"""
         senderrole = self.get_user_role(nick=sender)
         if senderrole != 'moderator':
             log.debug("Ban requested by %s " +
                       "failed because they are not a moderator", sender)
             return "Nope."
         log.debug("Attempting to ban %s", jid)
-        
+
         res = self._iq.ban(jid, reason)
-        
+
         if res:
             return "Okay, done!"
         else:
             return "Nope, sorry, no can do!"
 
     def unban_user_jid(self, jid, sender):
+        """Unban a user by their JID"""
         senderrole = self.get_user_role(nick=sender)
         if senderrole != 'moderator':
             log.debug("Unban requested by %s " +
                       "failed because they are not a moderator", sender)
             return "Nope."
         log.debug("Attempting to ban %s", jid)
-        
+
         res = self._connection.plugin['xep_0045'].setAffiliation(
-            self._connection.channel, jid=jid, affiliation="none", ifrom=self._connection.jid)        
+            self._connection.channel, jid=jid, affiliation="none", ifrom=self._connection.jid)
 
         if res:
             return "Okay, done"
@@ -214,7 +219,7 @@ class CardboardCommands(object):
 
     ###########################################################################
     # Tumblr as a service commands
-     
+
     def argue(self):
         """Tumblr-argueing thanks to Nyctef and his TumblrAAS"""
         try:
@@ -237,14 +242,14 @@ class CardboardCommands(object):
 
     ###########################################################################
     # Confirm or deny
-    
+
     def ceedee(self):
         """Confirm or deny"""
         return random.choice(['c', 'd'])
 
     ###########################################################################
     # Dice roller
-    
+
     def roll_dice(self, dice, sides):
         """Perform the actual rolling of the dice"""
         return [random.randint(1, sides) for i in list(range(dice))]
@@ -318,7 +323,7 @@ class CardboardCommands(object):
 
     ###########################################################################
     # Sudo
-    
+
     def sudo(self, message):
         """Execute a command with sudo privileges"""
         if self.get_user_role(message.sendernick) != 'moderator':
@@ -327,4 +332,3 @@ class CardboardCommands(object):
         else:
             return 'This command should not be run as root.' \
                 'Please execute this command without sudo.'
-    

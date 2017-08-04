@@ -115,9 +115,9 @@ class CardboardMessageHandler(object):
                 log.debug("Someone wants to ban")
                 nick = None
                 reason = None
-                match = re.match("\s*'([^']*)'(.*)", messageobject.args) or\
-                    re.match("\s*\"([^\"]*)\"(.*)", messageobject.args) or\
-                    re.match("\s*(\S*)(.*)", messageobject.args)
+                match = re.match(r"\s*'([^']*)'(.*)", messageobject.args) or\
+                    re.match(r"\s*\"([^\"]*)\"(.*)", messageobject.args) or\
+                    re.match(r"\s*(\S*)(.*)", messageobject.args)
                 if match:
                     nick = match.group(1)
                     reason = match.group(2).strip()
@@ -126,7 +126,7 @@ class CardboardMessageHandler(object):
                 message = messager.create_message(result)
                 messager.send_message(message)
                 return
-                
+
             if messageobject.command == "banjid":
                 log.debug("Someone wants to ban by jid")
                 splitted = messageobject.args.split(' ', 1)
@@ -142,14 +142,14 @@ class CardboardMessageHandler(object):
                 message = messager.create_message(result)
                 messager.send_message(message)
                 return
-            
+
             if messageobject.command == "unban":
                 log.debug("Someone wants to unban")
                 result = self._cmd.unban_user_jid(messageobject.args, messageobject.sendernick)
                 message = messager.create_message(result)
                 messager.send_message(message)
                 return
-            
+
             if messageobject.command == "banlist":
                 log.debug("Someone wants to get the banlist")
                 result = self._cmd.banlist()

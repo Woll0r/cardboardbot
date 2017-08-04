@@ -4,13 +4,10 @@
 """CardboardAlice module for all AI involving Alice (AIML) chat routines"""
 
 import logging
-
-# Needed for reading the memories file
-import yaml
-
-# Needed for loading the brain files
-import aiml
 import os.path
+
+import aiml
+import yaml
 
 log = logging.getLogger(__name__)
 

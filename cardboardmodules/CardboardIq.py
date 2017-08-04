@@ -1,15 +1,15 @@
 """CardboardIq module for handling IQ requests related to XMPP"""
 
 import logging
-import sleekxmpp
 import xml.etree.cElementTree as ET
-from sleekxmpp.exceptions import IqTimeout, IqError
 
+import sleekxmpp
+from sleekxmpp.exceptions import IqError, IqTimeout
 
 log = logging.getLogger(__name__)
 
 
-class CardboardIq():
+class CardboardIq(object):
     """CardboardIq class for handling IQ requests related to XMPP"""
 
     muc_namespace = 'http://jabber.org/protocol/muc#admin'
@@ -18,14 +18,15 @@ class CardboardIq():
         self.connection = connection
 
     def banlist(self):
+        """Fetch the banlist and process it"""
         # Register namespace to an empty prefix
         ET.register_namespace('', self.muc_namespace)
-        
+
         # Create the query elements
         root_element = ET.Element('{' + self.muc_namespace + '}query')
         item = ET.SubElement(root_element, 'item')
         item.set('affiliation', 'outcast')
-        
+
         # Create IQ stanza
         iq = self.connection.create_iq(id='banlist', itype='get',
                                        payload=root_element,
@@ -36,7 +37,7 @@ class CardboardIq():
             response = iq.send()
             items = response.findall('.//{' + self.muc_namespace + '}item')
             log.debug("Banlist contents: " + str(items))
-            
+
             res = ""
             for item in items:
                 if item.get('jid') is not None:
@@ -50,8 +51,9 @@ class CardboardIq():
             return iqt.text
 
     def ban(self, jid, reason=None):
+        """Ban a user"""
         ET.register_namespace('', self.muc_namespace)
-        
+
         root_element = ET.Element('{' + self.muc_namespace + '}query')
         item = ET.SubElement(root_element, 'item')
         item.set('affiliation', 'outcast')
@@ -59,7 +61,7 @@ class CardboardIq():
         if reason is not None:
             reasonelement = ET.SubElement(item, 'reason')
             reasonelement.text = reason
-        
+
         iq = self.connection.create_iq(id='ban', itype='set',
                                        payload=root_element,
                                        namespace=self.muc_namespace)

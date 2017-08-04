@@ -3,7 +3,20 @@
 
 """CardboardBot module that handles general chatbot things"""
 
+import logging
 import sys
+
+import sleekxmpp  # Jabber library
+
+from .CardboardAlice import CardboardAlice
+from .CardboardCommands import CardboardCommands
+from .CardboardDummyBrain import CardboardDummyBrain
+from .CardboardIq import CardboardIq
+from .CardboardLinks import CardboardLinks
+from .CardboardLookup import CardboardLookup
+from .CardboardMessageHandler import CardboardMessageHandler
+from .CardboardPresenceHandler import CardboardPresenceHandler
+from .CardboardSqlite import CardboardDatabase
 
 # Python versions before 3.0 do not use UTF-8 encoding
 # by default.  To ensure that Unicode is handled properly
@@ -12,19 +25,6 @@ import sys
 if sys.version_info < (3, 0):
     from sleekxmpp.util.misc_ops import setdefaultencoding
     setdefaultencoding('utf8')
-
-import logging
-
-import sleekxmpp  # Jabber library
-from .CardboardAlice import CardboardAlice
-from .CardboardCommands import CardboardCommands
-from .CardboardSqlite import CardboardDatabase
-from .CardboardMessageHandler import CardboardMessageHandler
-from .CardboardLinks import CardboardLinks
-from .CardboardLookup import CardboardLookup
-from .CardboardPresenceHandler import CardboardPresenceHandler
-from .CardboardDummyBrain import CardboardDummyBrain
-from .CardboardIq import CardboardIq
 
 log = logging.getLogger(__name__)
 
@@ -66,7 +66,7 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         self._links = CardboardLinks(database=self._db)
         self._lookup = CardboardLookup(links=self._links)
         self._iq = CardboardIq(connection=self)
-        self._commands = CardboardCommands(database=self._db, connection=self, iq = self._iq)
+        self._commands = CardboardCommands(database=self._db, connection=self, iq=self._iq)
         self._messagehandler = CardboardMessageHandler(brain=self._brain,
                                                        cmd=self._commands,
                                                        database=self._db,
@@ -107,6 +107,7 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         self._presencehandler.handler(event)
 
     def create_iq(self, id, itype, payload, namespace):
+        """Create the XMPP IQ xml payload for an action"""
         iq = self.make_iq(id=id, ifrom=self.jid, ito=self.channel,
                           itype=itype)
         iq.set_query(namespace)

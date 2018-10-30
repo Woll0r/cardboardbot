@@ -7,6 +7,8 @@ config.py
 # ignore brain
 aiml/
 standard.brn
+cardboardbrain.brn
+personality.yaml
 
 # ignore logs
 cardboardbot.log

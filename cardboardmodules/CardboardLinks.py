@@ -131,9 +131,7 @@ class CardboardLinks(object):
     def handle_url(self, timestamp, sender, body):
         """Handle URL's and get titles from the pages"""
         urlregex = re.compile(
-            r"((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]"
-            "+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)"
-            "((?:\/[\+~%\/.\w_-]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)")
+            r"((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w_-]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)")
         matches = urlregex.findall(body)
         matches = [x[0] for x in matches]
         matches = [self.imgur_filter(x) for x in matches]
@@ -155,7 +153,7 @@ class CardboardLinks(object):
                 if title:
                     results.append(title)
 
-            if not len(results):
+            if not results:
                 # no results
                 return False
             result = " / ".join(results).strip()
@@ -174,9 +172,7 @@ class CardboardLinks(object):
     def e621_filter(self, link):
         """Convert e621 image links into their full fledged counterparts"""
         e621regex = re.compile(
-            r'http(s)?://static([0-9]*).e621.net/data'
-            '(/sample)?.*?((?:[a-z0-9][a-z0-9]*[a-z0-9][a-z0-9]'
-            '+[a-z0-9]*))')
+            r'http(s)?://static([0-9]*).e621.net/data(/sample)?.*?((?:[a-z0-9][a-z0-9]*[a-z0-9][a-z0-9]+[a-z0-9]*))')
         match = e621regex.match(link)
         if match:
             replacement = 'https://e621.net/post/show.json?md5=' + \
@@ -189,8 +185,7 @@ class CardboardLinks(object):
         """Convert derpibooru image links
         into their full fledged counterparts"""
         derpibooruregex = re.compile(
-            r'http(s)?://derpicdn.net/img/view/([0-9]'
-            '{4}/[0-9]{1,2}/[0-9]{1,2})/([0-9]+)')
+            r'http(s)?://derpicdn.net/img/view/([0-9]{4}/[0-9]{1,2}/[0-9]{1,2})/([0-9]+)')
         match = derpibooruregex.match(link)
         if match:
             replacement = 'https://derpibooru.org/' + match.group(3)
@@ -201,8 +196,7 @@ class CardboardLinks(object):
     def deviantart_filter(self, link):
         """Convert DeviantArt image links into
         their full fledged counterparts"""
-        devartregex = re.compile(r'^http(s)?://'
-                                 '\w+\.deviantart\.[\w/]+-(\w+)\.\w+$')
+        devartregex = re.compile(r'^http(s)?://\w+\.deviantart\.[\w/]+-(\w+)\.\w+$')
         match = devartregex.match(link)
         if match:
             replacement = 'http://backend.deviantart.com/oembed?url=' + \

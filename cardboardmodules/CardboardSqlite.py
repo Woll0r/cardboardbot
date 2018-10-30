@@ -46,7 +46,7 @@ class CardboardDatabase(object):
                 "WHERE UPPER(nick) = UPPER(?);"
             cur.execute(cmd, (nick, ))
             results = cur.fetchall()
-            if results is None or len(results) == 0:
+            if results is None or not results:
                 return None
             else:
                 return results[0][0]
@@ -66,7 +66,7 @@ class CardboardDatabase(object):
                 "ORDER BY l.timestamp DESC LIMIT 1;"
             cur.execute(cmd, (nick, ))
             results = cur.fetchall()
-            if results is None or len(results) == 0:
+            if results is None or not results:
                 return None
             else:
                 return results[0]
@@ -82,7 +82,7 @@ class CardboardDatabase(object):
             cur = con.cursor()
             cmd = "INSERT INTO cardboardlog(" + \
                 "timestamp, name, message) VALUES(?, ?, ?);"
-            if len(nick):
+            if nick:
                 cur.execute(cmd, (timestamp, jid, message))
                 log.debug("Written to database!")
                 log.debug("Checking if name is in the database...")

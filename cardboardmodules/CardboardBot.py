@@ -53,13 +53,18 @@ class CardboardBot(sleekxmpp.ClientXMPP):
         self.use_message_ids = True
 
         # Setup AI handler
-        if sys.version_info < (3, 0):
-            self._brain = CardboardAlice(brainfile=brainfile,
-                                         memoriesfile=memoriesfile,
-                                         aimlpath=aimlpath, nick=self.nick)
-        else:
-            log.warning("No aiml module on Python3, not using Alice")
-            self._brain = CardboardDummyBrain()
+        #if sys.version_info < (3, 0):
+        #    self._brain = CardboardAlice(brainfile=brainfile,
+        #                                 memoriesfile=memoriesfile,
+        #                                 aimlpath=aimlpath, nick=self.nick)
+        #else:
+        #    log.warning("No aiml module on Python3, not using Alice")
+        #    self._brain = CardboardDummyBrain()
+	#
+	# Apparently they now have an aiml library on Python3!
+	self._brain = CardboardAlice(brainfile=brainfile,
+                                     memoriesfile=memoriesfile,
+                                     aimlpath=aimlpath, nick=self.nick)
 
         # Setup other handlers
         self._db = CardboardDatabase(databasefile=databasefile)
